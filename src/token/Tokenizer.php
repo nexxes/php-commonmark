@@ -75,17 +75,39 @@ class Tokenizer {
 	}
 	
 	public function run() {
+		$tokenizers = [
+			'tokenizeNewline',
+			
+			// Tokenizer methods that read a single char
+			'tokenizeColon',
+			'tokenizeSingleQuote',
+			'tokenizeDoubleQuote',
+			'tokenizeLeftSquareBracket',
+			'tokenizeRightSquareBracket',
+			'tokenizeLeftParenthesis',
+			'tokenizeRightParenthesis',
+			'tokenizeLeftAngularBracket',
+			'tokenizeRightAngularBracket',
+			
+			// Tokenizer methods with multiple chars of the same kind
+			'tokenizeBacktick',
+			'tokenizeEquals',
+			'tokenizeHash',
+			'tokenizeMinus',
+			'tokenizeStar',
+			'tokenizeTilde',
+			'tokenizeUnderscore',
+		];
+		
+		
 		while ($this->pos < $this->length) {
-			if ($this->tokenizeNewline()) {}
-			elseif ($this->tokenizeDash()) {}
-			elseif ($this->tokenizeEquals()) {}
-			elseif ($this->tokenizeHash()) {}
-			elseif ($this->tokenizeStar()) {}
-			elseif ($this->tokenizeUnderscore()) {}
-			else {
-				$this->pos++;
-				$this->column++;
+			foreach ($tokenizers AS $tokenizer) {
+				if ($this->{$tokenizer}()) {
+					continue 2;
+				}
 			}
+			
+			$this->pos++;
 		}
 		
 		return $this->tokens;
@@ -108,36 +130,92 @@ class Tokenizer {
 			return false;
 		}
 		
-		$this->tokens[] = new NewlineToken($this->line, $this->column, $found);
+		$this->tokens[] = new NewlineToken(Token::NEWLINE, $this->line, $this->column, $found);
 		$this->line++;
 		$this->column = 0;
 		
 		return true;
 	}
 	
-	private function tokenizeDash() {
-		return $this->tokenizeChar('-', DashToken::class);
+	private function tokenizeColon() {
+		return $this->tokenizeChar(':', Token::COLON);
+	}
+	
+	private function tokenizeSingleQuote() {
+		return $this->tokenizeChar('\'', Token::SINGLE_QUOTE);
+	}
+	
+	private function tokenizeDoubleQuote() {
+		return $this->tokenizeChar('"', Token::DOUBLE_QUOTE);
+	}
+	
+	private function tokenizeLeftSquareBracket() {
+		return $this->tokenizeChar('[', Token::SQUARE_BRACKET_LEFT);
+	}
+	
+	private function tokenizeRightSquareBracket() {
+		return $this->tokenizeChar(']', Token::SQUARE_BRACKET_RIGHT);
+	}
+	
+	private function tokenizeLeftParenthesis() {
+		return $this->tokenizeChar('(', Token::PARENTHESIS_LEFT);
+	}
+	
+	private function tokenizeRightParenthesis() {
+		return $this->tokenizeChar(')', Token::PARENTHESIS_RIGHT);
+	}
+	
+	private function tokenizeLeftAngularBracket() {
+		return $this->tokenizeChar('<', Token::ANGLE_BRACKET_LEFT);
+	}
+	
+	private function tokenizeRightAngularBracket() {
+		return $this->tokenizeChar('>', Token::ANGLE_BRACKET_RIGHT);
+	}
+	
+	private function tokenizeChar($char, $tokenType) {
+		if (!isset($this->raw[$this->pos]) || ($this->raw[$this->pos] !== $char)) {
+			return false;
+		}
+		
+		$this->tokens[] = new CharToken($tokenType, $this->line, $this->column, $char);
+		$this->pos++;
+		$this->column++;
+		
+		return true;
+	}
+	
+	private function tokenizeBacktick() {
+		return $this->tokenizeChars('`', Token::BACKTICK);
 	}
 	
 	private function tokenizeEquals() {
-		return $this->tokenizeChar('=', EqualsToken::class);
+		return $this->tokenizeChars('=', Token::EQUALS);
 	}
 	
 	private function tokenizeHash() {
-		return $this->tokenizeChar('#', HashToken::class);
+		return $this->tokenizeChars('#', Token::HASH);
+	}
+	
+	private function tokenizeMinus() {
+		return $this->tokenizeChars('-', Token::MINUS);
 	}
 	
 	private function tokenizeStar() {
-		return $this->tokenizeChar('*', StarToken::class);
+		return $this->tokenizeChars('*', Token::STAR);
+	}
+	
+	private function tokenizeTilde() {
+		return $this->tokenizeChars('~', Token::TILDE);
 	}
 	
 	private function tokenizeUnderscore() {
-		return $this->tokenizeChar('_', UnderscoreToken::class);
+		return $this->tokenizeChars('_', Token::UNDERSCORE);
 	}
 	
-	private function tokenizeChar($char, $tokenClass) {
+	private function tokenizeChars($char, $tokenType) {
 		// Char not matching
-		if ($this->raw[$this->pos] !== $char) {
+		if (!isset($this->raw[$this->pos]) || ($this->raw[$this->pos] !== $char)) {
 			return false;
 		}
 		
@@ -150,9 +228,12 @@ class Tokenizer {
 			$this->pos++;
 		} while (($this->pos < $this->length) && ($this->raw[$this->pos] === $char));
 		
-		$this->tokens[] = new $tokenClass($this->line, $this->column, $raw);
+		$this->tokens[] = new CharToken($tokenType, $this->line, $this->column, $raw);
 		$this->column += $count;
 		
 		return true;
 	}
+	
+	
+	
 }

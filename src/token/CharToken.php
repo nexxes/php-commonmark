@@ -27,7 +27,19 @@
 namespace nexxes\stmd\token;
 
 /**
+ * A CharToken represents a token that consists only of a single char that may be repeated several times.
+ * The following invariant must always be true:
+ * <code>
+ * $this->raw = \str_repeat($this->char, $this->length);
+ * </code>
+ * 
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class EqualsToken extends Token {
+class CharToken extends Token {
+	public $char;
+	
+	public function __construct($type, $line, $pos, $raw) {
+		parent::__construct($type, $line, $pos, $raw);
+		$this->char = $raw[0];
+	}
 }

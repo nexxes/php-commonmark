@@ -31,12 +31,38 @@ namespace nexxes\stmd\token;
  *
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-abstract class Token {
+class Token {
+	const WHITESPACE = 1;
+	const NEWLINE = 2;
+	const TEXT = 3;
+	
+	const MINUS = 100;
+	const EQUALS = 101;
+	const HASH = 102;
+	const STAR = 103;
+	const TILDE = 104;
+	const UNDERSCORE = 105;
+	const BACKTICK = 106;
+	const SINGLE_QUOTE = 107;
+	const DOUBLE_QUOTE = 108;
+	const COLON = 109;
+	
+	const PARENTHESIS_LEFT = 200;
+	const PARENTHESIS_RIGHT = 201;
+	const SQUARE_BRACKET_LEFT = 202;
+	const SQUARE_BRACKET_RIGHT = 203;
+	const CURLY_BRACKET_LEFT = 204;
+	const CURLY_BRACKET_RIGHT = 205;
+	const ANGLE_BRACKET_LEFT = 206;
+	const ANGLE_BRACKET_RIGHT = 207;
+	
+	const HTML = 300;
+	
 	/**
-	 * The raw content of the token
-	 * @var string 
+	 * The actual type of the token
+	 * @var mixed
 	 */
-	public $raw;
+	public $type;
 	
 	/**
 	 * The line in the original token stream
@@ -51,12 +77,19 @@ abstract class Token {
 	public $pos;
 	
 	/**
+	 * The raw content of the token
+	 * @var string 
+	 */
+	public $raw;
+	
+	/**
 	 * Length of the token
 	 * @var int 
 	 */
 	public $length;
 	
-	public function __construct($line, $pos, $raw) {
+	public function __construct($type, $line, $pos, $raw) {
+		$this->type = $type;
 		$this->line = $line;
 		$this->pos = $pos;
 		$this->raw = $raw;

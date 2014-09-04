@@ -40,68 +40,28 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 	}
 	
 	/**
+	 * Tests token types that consist of a single char that may be repeated multiple times
 	 * @test 
 	 */
-	public function testDash() {
-		$text = '----';
-		$tokens = $this->tokenize($text);
+	public function testRepeatedSingleCharTokens() {
+		$tests = [
+			[ '```', Token::BACKTICK ],
+			[ '=========', Token::EQUALS ],
+			[ '###', Token::HASH ],
+			[ '-----', Token::MINUS ],
+			[ '*****', Token::STAR ],
+			[ '~~', Token::TILDE ],
+			[ '_', Token::UNDERSCORE ],
+		];
 		
-		$this->assertCount(1, $tokens);
-		$this->assertInstanceOf(DashToken::class, $tokens[0]);
-		$this->assertEquals(\strlen($text), $tokens[0]->length);
-		$this->assertEquals($text, $tokens[0]->raw);
-	}
-	
-	/**
-	 * @test 
-	 */
-	public function testHash() {
-		$text = '###';
-		$tokens = $this->tokenize($text);
-		
-		$this->assertCount(1, $tokens);
-		$this->assertInstanceOf(HashToken::class, $tokens[0]);
-		$this->assertEquals(\strlen($text), $tokens[0]->length);
-		$this->assertEquals($text, $tokens[0]->raw);
-	}
-	
-	/**
-	 * @test 
-	 */
-	public function testStar() {
-		$text = '*****';
-		$tokens = $this->tokenize($text);
-		
-		$this->assertCount(1, $tokens);
-		$this->assertInstanceOf(StarToken::class, $tokens[0]);
-		$this->assertEquals(\strlen($text), $tokens[0]->length);
-		$this->assertEquals($text, $tokens[0]->raw);
-	}
-	
-	/**
-	 * @test 
-	 */
-	public function testUnderscore() {
-		$text = '__';
-		$tokens = $this->tokenize($text);
-		
-		$this->assertCount(1, $tokens);
-		$this->assertInstanceOf(UnderscoreToken::class, $tokens[0]);
-		$this->assertEquals(\strlen($text), $tokens[0]->length);
-		$this->assertEquals($text, $tokens[0]->raw);
-	}
-	
-	/**
-	 * @test 
-	 */
-	public function testEquals() {
-		$text = '=========';
-		$tokens = $this->tokenize($text);
-		
-		$this->assertCount(1, $tokens);
-		$this->assertInstanceOf(EqualsToken::class, $tokens[0]);
-		$this->assertEquals(\strlen($text), $tokens[0]->length);
-		$this->assertEquals($text, $tokens[0]->raw);
+		foreach ($tests AS list($testString, $tokenType)) {
+			$tokens = $this->tokenize($testString);
+			
+			$this->assertCount(1, $tokens);
+			$this->assertEquals($tokenType, $tokens[0]->type);
+			$this->assertEquals(\strlen($testString), $tokens[0]->length);
+			$this->assertEquals($testString, $tokens[0]->raw);
+		}
 	}
 	
 	/**
@@ -116,5 +76,31 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf(NewlineToken::class, $tokens[1]);
 		$this->assertInstanceOf(NewlineToken::class, $tokens[2]);
 		$this->assertInstanceOf(NewlineToken::class, $tokens[3]);
+	}
+	
+	/**
+	 * Test tokens that match only a single character
+	 * @test
+	 */
+	public function testSingleCharTokens() {
+		$text = ':([<\'"' . "\r\n\n\r" . '"\'>])';
+		$tokens = $this->tokenize($text);
+		
+		$this->assertCount(\strlen($text)-1, $tokens);
+		
+		$this->assertEquals(Token::COLON, $tokens[0]->type);
+		$this->assertEquals(Token::PARENTHESIS_LEFT, $tokens[1]->type);
+		$this->assertEquals(Token::SQUARE_BRACKET_LEFT, $tokens[2]->type);
+		$this->assertEquals(Token::ANGLE_BRACKET_LEFT, $tokens[3]->type);
+		$this->assertEquals(Token::SINGLE_QUOTE, $tokens[4]->type);
+		$this->assertEquals(Token::DOUBLE_QUOTE, $tokens[5]->type);
+		$this->assertEquals(Token::NEWLINE, $tokens[6]->type);
+		$this->assertEquals(Token::NEWLINE, $tokens[7]->type);
+		$this->assertEquals(Token::NEWLINE, $tokens[8]->type);
+		$this->assertEquals(Token::DOUBLE_QUOTE, $tokens[9]->type);
+		$this->assertEquals(Token::SINGLE_QUOTE, $tokens[10]->type);
+		$this->assertEquals(Token::ANGLE_BRACKET_RIGHT, $tokens[11]->type);
+		$this->assertEquals(Token::SQUARE_BRACKET_RIGHT, $tokens[12]->type);
+		$this->assertEquals(Token::PARENTHESIS_RIGHT, $tokens[13]->type);
 	}
 }
