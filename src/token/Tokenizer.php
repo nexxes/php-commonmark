@@ -31,72 +31,128 @@ namespace nexxes\stmd\token;
  */
 class Tokenizer {
 	/**
-	 * @param string $string
-	 * @return array<Token>
+	 * Data to tokenize
+	 * @var string
 	 */
-	public function run($string) {
-		$globalpos = 0;
-		$length = \strlen($string);
-		$line = 0;
-		$pos = 0;
-		
-		$tokens = [];
-		
-		while ($globalpos < $length) {
-			$raw = '';
-			
-			// Read return newline
-			if (($string[$globalpos] === "\r") && isset($string[$globalpos+1]) && ($string[$globalpos+1] === "\n")) {
-				$tokens[] = new NewlineToken($line, $pos, "\r\n");
-				$line++;
-				$pos = 0;
-				$globalpos += 2;
-			}
-			
-			// Read newline
-			elseif (($string[$globalpos] === "\r") || ($string[$globalpos] === "\n")) {
-				$tokens[] = new NewlineToken($line, $pos, $string[$globalpos]);
-				$line++;
-				$pos = 0;
-				$globalpos++;
-			}
-			
-			elseif ($string[$globalpos] === '\\') {
-				$tokens[] = new LiteralToken($line, $pos, '\\' . $string[$globalpos+1]);
-				$pos += 2;
-				$globalpos += 2;
-			}
-			
-			// Read chars
-			elseif (\in_array($string[$globalpos], ['_', '-', '#', '*', '=', ])) {
-				$char = $string[$globalpos];
-				
-				while (isset($string[$globalpos]) && ($string[$globalpos] === $char)) {
-					$raw .= $char;
-					$globalpos++;
-				}
-				
-				if ($char === '_') {
-					$tokens[] = new UnderscoreToken($line, $pos, $raw);
-				} elseif ($char === '-') {
-					$tokens[] = new DashToken($line, $pos, $raw);
-				} elseif ($char === '#') {
-					$tokens[] = new HashToken($line, $pos, $raw);
-				} elseif ($char === '*') {
-					$tokens[] = new StarToken($line, $pos, $raw);
-				} elseif ($char === '=') {
-					$tokens[] = new EqualsToken($line, $pos, $raw);
-				}
-				
-				$pos += \strlen($raw);
-			}
-			
+	private $raw;
+	
+	/**
+	 * String length of $raw
+	 * @var int
+	 */
+	private $length;
+	
+	/**
+	 * Char position in $raw
+	 * @var type 
+	 */
+	private $pos = 0;
+	
+	/**
+	 * Line position in the current tokenizing process
+	 * @var int
+	 */
+	private $line = 0;
+	
+	/**
+	 * Current char position in $line
+	 * @var int
+	 */
+	private $column = 0;
+	
+	/**
+	 * List of generated tokens
+	 * @var array<Token>
+	 */
+	private $tokens = [];
+	
+	
+	
+	
+	public function __construct($data) {
+		$this->raw = $data;
+		$this->length = \strlen($data);
+	}
+	
+	public function run() {
+		while ($this->pos < $this->length) {
+			if ($this->tokenizeNewline()) {}
+			elseif ($this->tokenizeDash()) {}
+			elseif ($this->tokenizeEquals()) {}
+			elseif ($this->tokenizeHash()) {}
+			elseif ($this->tokenizeStar()) {}
+			elseif ($this->tokenizeUnderscore()) {}
 			else {
-				$pos++;
-				$globalpos++;
+				$this->pos++;
+				$this->column++;
 			}
 		}
 		
-		return $tokens;
+		return $this->tokens;
+	}
+	
+	private function tokenizeNewline() {
+		$found = '';
+		
+		if (($this->pos < $this->length) && ($this->raw[$this->pos] === "\r")) {
+			$found .= "\r";
+			$this->pos++;
+		}
+		
+		if (($this->pos < $this->length) && ($this->raw[$this->pos] === "\n")) {
+			$found .= "\n";
+			$this->pos++;
+		}
+		
+		if ($found === '') {
+			return false;
+		}
+		
+		$this->tokens[] = new NewlineToken($this->line, $this->column, $found);
+		$this->line++;
+		$this->column = 0;
+		
+		return true;
+	}
+	
+	private function tokenizeDash() {
+		return $this->tokenizeChar('-', DashToken::class);
+	}
+	
+	private function tokenizeEquals() {
+		return $this->tokenizeChar('=', EqualsToken::class);
+	}
+	
+	private function tokenizeHash() {
+		return $this->tokenizeChar('#', HashToken::class);
+	}
+	
+	private function tokenizeStar() {
+		return $this->tokenizeChar('*', StarToken::class);
+	}
+	
+	private function tokenizeUnderscore() {
+		return $this->tokenizeChar('_', UnderscoreToken::class);
+	}
+	
+	private function tokenizeChar($char, $tokenClass) {
+		// Char not matching
+		if ($this->raw[$this->pos] !== $char) {
+			return false;
+		}
+		
+		$count = 0;
+		$raw = '';
+		
+		do {
+			$count++;
+			$raw .= $char;
+			$this->pos++;
+		} while (($this->pos < $this->length) && ($this->raw[$this->pos] === $char));
+		
+		$this->tokens[] = new $tokenClass($this->line, $this->column, $raw);
+		$this->column += $count;
+		
+		return true;
 	}
 }

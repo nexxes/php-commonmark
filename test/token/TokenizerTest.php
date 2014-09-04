@@ -35,9 +35,8 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 	 * @return array<Token>
 	 */
 	private function tokenize($text) {
-		$tokenizer = new Tokenizer();
-		$tokens = $tokenizer->run($text);
-		return $tokens;
+		$tokenizer = new Tokenizer($text);
+		return $tokenizer->run();
 	}
 	
 	/**
