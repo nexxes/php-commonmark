@@ -1,0 +1,3 @@
+[submodule "stmd-spec"]
+path = spec
+url = http://github.com/jgm/stmd
