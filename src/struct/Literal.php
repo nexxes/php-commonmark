@@ -35,13 +35,23 @@ class Literal {
 	/**
 	 * @var \nexxes\stmd\token\Token
 	 */
-	public $token;
+	public $tokens;
 	
-	public function __construct(Token $token) {
-		$this->token = $token;
+	public function __construct($tokens) {
+		$this->tokens = $tokens;
 	}
 	
 	public function __toString() {
-		return $this->token->raw;
+		$r = '';
+		
+		if (is_array($this->tokens)) {
+			foreach ($this->tokens AS $token) {
+				$r .= $token->raw;
+			}
+		} else {
+			$r .= $this->tokens->raw;
+		}
+		
+		return $r;
 	}
 }
