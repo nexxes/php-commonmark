@@ -36,8 +36,12 @@ class AttributeValueToken extends Token {
 	
 	public $quoting;
 	
-	public function __construct($line, $pos, $raw, $quoting = self::UNQUOTED) {
-		parent::__construct(Token::ATTRIBUTE_VALUE, $line, $pos, $raw);
+	public $value;
+	
+	public function __construct($line, $pos, $value, $quoting = self::UNQUOTED) {
+		$this->value = $value;
+		$quote = ($quoting === self::DOUBLE_QUOTED ? '"' : ($quoting === self::SINGLE_QUOTED ? '\'' : ''));
+		parent::__construct(Token::ATTRIBUTE_VALUE, $line, $pos, $quote . $value . $quote);
 		$this->quoting = $quoting;
 	}
 }
