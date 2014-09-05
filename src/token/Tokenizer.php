@@ -348,6 +348,120 @@ class Tokenizer {
 	}
 	
 	/**
+	 * Read an attribute from the input.
+	 * An attribute is preceeded by whitespace and has an optional value.
+	 * 
+	 * @return boolean
+	 * @link http://jgm.github.io/stmd/spec.html#attribute
+	 */
+	public function tokenizeAttribute() {
+		// Attribute is separated by space
+		if (false === ($space = $this->readWhitespace($this->pos))) {
+			return false;
+		}
+		
+		// Try to read tag name
+		if (false === ($name = $this->readAttributeName($this->pos + \strlen($space)))) {
+			return false;
+		}
+		
+		$this->tokenizeWhitespace($space);
+		
+		$this->tokens[] = new Token(Token::ATTRIBUTE_NAME, $this->line, $this->column, $name);
+		$this->column += \strlen($name);
+		$this->pos += \strlen($name);
+		
+		// Read attributes
+		$this->tokenizeAttributeValue();
+	}
+	
+	/**
+	 * Read an attribute value from the input.
+	 * 
+	 * An attribute value can be unquoted or quoted bei either single or double quotes
+	 * 
+	 * @return boolean
+	 * @link http://jgm.github.io/stmd/spec.html#attribute-value
+	 */
+	private function tokenizeAttributeValue() {
+		$pos = $this->pos;
+		
+		// Attribute name and = may be separated by space
+		if (false !== ($space1 = $this->readWhitespace($pos))) {
+			$pos += \strlen($space1);
+		}
+		
+		// Can not read =
+		if (($pos >= $this->length) || ($this->raw[$pos] !== '=')) {
+			return false;
+		}
+		$pos++;
+		
+		// = and attribute value may be separated by space
+		if (false !== ($space2 = $this->readWhitespace($pos))) {
+			$pos += \strlen($space2);
+		}
+		
+		// Try to read quoted string
+		if (($pos < $this->length) && (($this->raw[$pos] === '\'') || ($this->raw[$pos] === '"'))) {
+			$delimiter = $this->raw[$pos];
+			
+			if (false === ($endpos = \strpos($this->raw, $delimiter, $pos+1))) {
+				throw new \RuntimeException('Can not find delimiter ' . $delimiter . ' for attribute value starting in line ' . $this->line . ' on position ' . $this->pos);
+			}
+			
+			$type = ($delimiter === '"' ? AttributeValueToken::DOUBLE_QUOTED : AttributeValueToken::SINGLE_QUOTED);
+		}
+		
+		// Read unquoted string
+		else {
+			$type = AttributeValueToken::UNQUOTED;
+			$delimiter = '';
+			
+			$endpos = $pos;
+			while (($endpos < $this->length) && (false === \strpos('\'"=<>`', $this->raw[$endpos]))) {
+				$endpos++;
+			}
+			
+			if ($pos === $endpos) {
+				throw new \RuntimeException('Can not find attribute value starting in line ' . $this->line . ' on position ' . $this->pos);
+			}
+		}
+		
+		$this->tokenizeWhitespace($space1);
+		$this->tokenizeEquals();
+		$this->tokenizeWhitespace($space2);
+		
+		$raw = \substr($this->raw, $this->pos + \strlen($delimiter), $endpos - $this->pos - \strlen($delimiter));
+		$this->tokens[] = new AttributeValueToken($this->line, $this->pos, $raw, $type);
+		$this->pos += \strlen($raw) + (2*\strlen($delimiter));
+		$this->column += \strlen($raw) + (2*\strlen($delimiter));
+		return true;
+	}
+	
+	/**
+	 * Try to read an attribute name
+	 * @param int $pos
+	 * @return string
+	 */
+	private function readAttributeName($pos) {
+		// Try to read attribute name
+		if (($pos >= $this->length) || (false === \stripos('abcdefghijklmnopqrstuvwxyz_:', $this->raw[$pos]))) {
+			return false;
+		}
+		
+		$name = $this->raw[$pos];
+		$pos++;
+		
+		while (($pos < $this->length) && (false !== \stripos('abcdefghijklmnopqrstuvwxyz0123456789_.:-', $this->raw[$pos]))) {
+			$name .= $this->raw[$pos];
+			$pos++;
+		}
+		
+		return $name;
+	}
+	
+	/**
 	 * Count the number of line breaks in a string
 	 * @param string $string
 	 * @return int

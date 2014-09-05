@@ -221,4 +221,84 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(Token::WHITESPACE, $tokens[0]->type);
 		$this->assertEquals(\strlen($text), $tokens[0]->length);
 	}
+	
+	/**
+	 * Try to tokenize an HTML attribute
+	 * @test
+	 * @covers ::tokenizeAttribute
+	 * @covers ::tokenizeAttributeValue
+	 * @covers ::readAttributeName
+	 */
+	public function testAttributeToken() {
+		$text = '   attrName';
+		$tokens = $this->callTokenizer('tokenizeAttribute', $text);
+		
+		$this->assertCount(2, $tokens);
+		$this->assertEquals(Token::WHITESPACE, $tokens[0]->type);
+		$this->assertEquals(Token::ATTRIBUTE_NAME, $tokens[1]->type);
+		$this->assertEquals('attrName', $tokens[1]->raw);
+		
+		$text = '   attrName = attrValue';
+		$tokens = $this->callTokenizer('tokenizeAttribute', $text);
+		
+		$this->assertCount(6, $tokens);
+		$this->assertEquals(Token::WHITESPACE, $tokens[0]->type);
+		$this->assertEquals(Token::ATTRIBUTE_NAME, $tokens[1]->type);
+		$this->assertEquals('attrName', $tokens[1]->raw);
+		$this->assertEquals(Token::WHITESPACE, $tokens[2]->type);
+		$this->assertEquals(Token::EQUALS, $tokens[3]->type);
+		$this->assertEquals(Token::WHITESPACE, $tokens[4]->type);
+		$this->assertEquals(Token::ATTRIBUTE_VALUE, $tokens[5]->type);
+		$this->assertEquals('attrValue', $tokens[5]->raw);
+		$this->assertEquals(AttributeValueToken::UNQUOTED, $tokens[5]->quoting);
+		
+		$text = '   attrName= "attrValue"';
+		$tokens = $this->callTokenizer('tokenizeAttribute', $text);
+		
+		$this->assertCount(5, $tokens);
+		$this->assertEquals(Token::WHITESPACE, $tokens[0]->type);
+		$this->assertEquals(Token::ATTRIBUTE_NAME, $tokens[1]->type);
+		$this->assertEquals('attrName', $tokens[1]->raw);
+		$this->assertEquals(Token::EQUALS, $tokens[2]->type);
+		$this->assertEquals(Token::WHITESPACE, $tokens[3]->type);
+		$this->assertEquals(Token::ATTRIBUTE_VALUE, $tokens[4]->type);
+		$this->assertEquals('attrValue', $tokens[4]->raw);
+		$this->assertEquals(AttributeValueToken::DOUBLE_QUOTED, $tokens[4]->quoting);
+		
+		$text = '   attrName=\'attr"#`Value\'';
+		$tokens = $this->callTokenizer('tokenizeAttribute', $text);
+		
+		$this->assertCount(4, $tokens);
+		$this->assertEquals(Token::WHITESPACE, $tokens[0]->type);
+		$this->assertEquals(Token::ATTRIBUTE_NAME, $tokens[1]->type);
+		$this->assertEquals('attrName', $tokens[1]->raw);
+		$this->assertEquals(Token::EQUALS, $tokens[2]->type);
+		$this->assertEquals(Token::ATTRIBUTE_VALUE, $tokens[3]->type);
+		$this->assertEquals('attr"#`Value', $tokens[3]->raw);
+		$this->assertEquals(AttributeValueToken::SINGLE_QUOTED, $tokens[3]->quoting);
+	}
+	
+	/**
+	 * Try to tokenize an unclosed attribute value
+	 * @test
+	 * @covers ::tokenizeAttributeValue
+	 * @expectedException \RuntimeException
+	 * @expectedExceptionMessage Can not find delimiter
+	 */
+	public function testUnclosedAttributeValue() {
+		$text = ' attrName="attrValue';
+		$this->callTokenizer('tokenizeAttribute', $text);
+	}
+	
+	/**
+	 * Try to tokenize empty attribute value
+	 * @test
+	 * @covers ::tokenizeAttributeValue
+	 * @expectedException \RuntimeException
+	 * @expectedExceptionMessage Can not find attribute value
+	 */
+	public function testEmptyAttributeValue() {
+		$text = ' attrName=  `<foo>`';
+		$this->callTokenizer('tokenizeAttribute', $text);
+	}
 }
