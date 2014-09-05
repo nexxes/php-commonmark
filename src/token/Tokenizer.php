@@ -234,6 +234,33 @@ class Tokenizer {
 		return true;
 	}
 	
+	/**
+	 * Count the number of line breaks in a string
+	 * @param string $string
+	 * @return int
+	 */
+	private function countLinebreaks(&$string) {
+		// Calculate number of lines 
+		$rn = \substr_count($string, "\r\n");
+		$r = \substr_count($string, "\r") - $rn;
+		$n = \substr_count($string, "\n") - $rn;
+		
+		return $rn + $r + $n;
+	}
 	
-	
+	/**
+	 * Calculate the number of bytes in the last line of the supplied string.
+	 * @param string $string
+	 * @return int
+	 */
+	private function lastLineLength(&$string) {
+		$r = \strrpos($string, "\r");
+		$n = \strrpos($string, "\n");
+		
+		if (($r === false) && ($n === false)) {
+			return \strlen($string);
+		} else {
+			return \strlen($string) - (\max($r, $n)+1);
+		}
+	}
 }

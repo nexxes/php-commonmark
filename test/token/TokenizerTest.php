@@ -28,6 +28,7 @@ namespace nexxes\stmd\token;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
+ * @coversDefaultClass \nexxes\stmd\token\Tokenizer
  */
 class TokenizerTest extends \PHPUnit_Framework_TestCase {
 	/**
@@ -37,6 +38,28 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 	private function tokenize($text) {
 		$tokenizer = new Tokenizer($text);
 		return $tokenizer->run();
+	}
+	
+	/**
+	 * Little helper to call a private method in the tokenizer class and execute it with one parameter
+	 * 
+	 * @param string $method Name of the private method to call
+	 * @param string $text The text to supply as first (and only) argument
+	 * @param bool $reference Make parameter a reference
+	 * @param bool $returnTokens Return token list instead of method return value
+	 */
+	private function callPrivate($method, $text, $reference = false) {
+		$tokenizer = new Tokenizer("");
+		
+		$reflectionClass = new \ReflectionClass(Tokenizer::class);
+		$exec = $reflectionClass->getMethod($method);
+		$exec->setAccessible(true);
+		
+		if ($reference) {
+			return $exec->invokeArgs($tokenizer, [&$text]);
+		} else {
+			return $exec->invoke($tokenizer, $text);
+		}
 	}
 	
 	/**
@@ -102,5 +125,41 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(Token::ANGLE_BRACKET_RIGHT, $tokens[11]->type);
 		$this->assertEquals(Token::SQUARE_BRACKET_RIGHT, $tokens[12]->type);
 		$this->assertEquals(Token::PARENTHESIS_RIGHT, $tokens[13]->type);
+	}
+	
+	/**
+	 * @test
+	 * @covers ::countLinebreaks
+	 */
+	public function testCountLinebreaks() {
+		$text1 = "Ein Test";
+		$this->assertEquals(0, $this->callPrivate('countLinebreaks', $text1, true));
+		
+		$text2 = "Ein Test\nZwei Test";
+		$this->assertEquals(1, $this->callPrivate('countLinebreaks', $text2, true));
+		
+		$text3 = "Ein Test\nZwei Test\r\nFoobar\rBaz\nTest";
+		$this->assertEquals(4, $this->callPrivate('countLinebreaks', $text3, true));
+		
+		$text4 = "Ein Test\n";
+		$this->assertEquals(1, $this->callPrivate('countLinebreaks', $text4, true));
+	}
+	
+	/**
+	 * @test
+	 * @covers ::lastLineLength
+	 */
+	public function testLastLineLength() {
+		$text1 = "Ein Test";
+		$this->assertEquals(8, $this->callPrivate('lastLineLength', $text1, true));
+		
+		$text2 = "Ein Test\nZwei Test";
+		$this->assertEquals(9, $this->callPrivate('lastLineLength', $text2, true));
+		
+		$text3 = "Ein Test\nZwei Test\r\nFoobar\rBaz\nTest";
+		$this->assertEquals(4, $this->callPrivate('lastLineLength', $text3, true));
+		
+		$text4 = "Ein Test\n";
+		$this->assertEquals(0, $this->callPrivate('lastLineLength', $text4, true));
 	}
 }
