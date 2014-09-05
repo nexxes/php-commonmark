@@ -46,6 +46,7 @@ class Token {
 	const SINGLE_QUOTE = 107;
 	const DOUBLE_QUOTE = 108;
 	const COLON = 109;
+	const SLASH = 110;
 	
 	const PARENTHESIS_LEFT = 200;
 	const PARENTHESIS_RIGHT = 201;

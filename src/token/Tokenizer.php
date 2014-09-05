@@ -149,6 +149,10 @@ class Tokenizer {
 		return $this->tokenizeChar(':', Token::COLON);
 	}
 	
+	private function tokenizeSlash() {
+		return $this->tokenizeChar('/', Token::SLASH);
+	}
+	
 	private function tokenizeSingleQuote() {
 		return $this->tokenizeChar('\'', Token::SINGLE_QUOTE);
 	}
@@ -372,7 +376,7 @@ class Tokenizer {
 		$this->pos += \strlen($name);
 		
 		// Read attributes
-		$this->tokenizeAttributeValue();
+		return $this->tokenizeAttributeValue();
 	}
 	
 	/**
@@ -419,7 +423,7 @@ class Tokenizer {
 			$delimiter = '';
 			
 			$endpos = $pos;
-			while (($endpos < $this->length) && (false === \strpos('\'"=<>`', $this->raw[$endpos]))) {
+			while (($endpos < $this->length) && (false === \strpos(' \'"=<>`', $this->raw[$endpos]))) {
 				$endpos++;
 			}
 			
@@ -459,6 +463,110 @@ class Tokenizer {
 		}
 		
 		return $name;
+	}
+	
+	/**
+	 * Try to read an opening HTML tag
+	 * @return boolean
+	 * @link http://jgm.github.io/stmd/spec.html#open-tag
+	 */
+	private function tokenizeOpenTag() {
+		// Get required angular bracket
+		if ($this->raw[$this->pos] !== '<') {
+			return false;
+		}
+		
+		// Get alphanumberic tag name
+		if (false === ($tagname = $this->readTagName($this->pos+1))) {
+			return false;
+		}
+		
+		$this->tokenizeLeftAngularBracket();
+		$this->tokenizeTagName($tagname);
+		while ($this->tokenizeAttribute()); // Optional attributes
+		$this->tokenizeWhitespace(); // Optional
+		$this->tokenizeSlash(); // Optional / so no closing tag is required
+		if (!$this->tokenizeRightAngularBracket()) {
+			print_r($this->tokens);
+			throw new \RuntimeException('No closing bracket for tag "' . $tagname . '" found in line ' . $this->line . ' on position ' . $this->column);
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Try to read a closing HTML tag
+	 * @return boolean
+	 * @link http://jgm.github.io/stmd/spec.html#closing-tag
+	 */
+	private function tokenizeClosingTag() {
+		// closing tag needs to start with <
+		if ($this->raw[$this->pos] !== '<') {
+			return false;
+		}
+		
+		// followed by /
+		if (!isset($this->raw[$this->pos+1]) || ($this->raw[$this->pos+1] !== '/')) {
+			return false;
+		}
+		
+		// followed by the tag name
+		if (false === ($tagname = $this->readTagName($this->pos+2))) {
+			return false;
+		}
+		
+		$this->tokenizeLeftAngularBracket();
+		$this->tokenizeSlash();
+		$this->tokenizeTagName($tagname);
+		$this->tokenizeWhitespace(); // Optional
+		if (!$this->tokenizeRightAngularBracket()) {
+			throw new \RuntimeException('No closing bracket for tag "' . $tagname . '" found in line ' . $this->line . ' on position ' . $this->column);
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Try to tokenize a tag name.
+	 * 
+	 * If $name is supplied, don't try to read a tag name from the current position but assume $name can be tokenized.
+	 * 
+	 * @param string $name
+	 * @return boolean
+	 */
+	private function tokenizeTagName($name = null) {
+		if ($name === null) {
+			$name = $this->readTagName($this->pos);
+		}
+		
+		if ($name === false) {
+			return false;
+		}
+		
+		$this->tokens[] = new Token(Token::TAGNAME, $this->line, $this->column, $name);
+		$this->column += \strlen($name);
+		$this->pos += \strlen($name);
+		
+		return true;
+	}
+	
+	/**
+	 * Try to read a tag name or return false if not possible
+	 * @return string
+	 */
+	private function readTagName($pos) {
+		if (($pos >= $this->length) || !\ctype_alpha($this->raw[$pos])) {
+			return false;
+		}
+		
+		$tagname = '';
+		
+		do {
+			$tagname .= $this->raw[$pos];
+			$pos++;
+		} while (($pos < $this->length) && (\ctype_alnum($this->raw[$pos])));
+		
+		return $tagname;
 	}
 	
 	/**

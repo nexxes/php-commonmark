@@ -238,7 +238,7 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(Token::ATTRIBUTE_NAME, $tokens[1]->type);
 		$this->assertEquals('attrName', $tokens[1]->raw);
 		
-		$text = '   attrName = attrValue';
+		$text = '   attrName = attrValue foo';
 		$tokens = $this->callTokenizer('tokenizeAttribute', $text);
 		
 		$this->assertCount(6, $tokens);
@@ -300,5 +300,100 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 	public function testEmptyAttributeValue() {
 		$text = ' attrName=  `<foo>`';
 		$this->callTokenizer('tokenizeAttribute', $text);
+	}
+	
+	/**
+	 * @test
+	 * @covers ::tokenizeOpenTag
+	 * @covers ::tokenizeTagName
+	 * @covers ::readTagName
+	 * @covers ::tokenizeAttribute
+	 * @covers ::tokenizeAttributeValue
+	 * @covers ::readAttributeName
+	 */
+	public function testOpenTag() {
+		$text = '<name>';
+		$tokens = $this->callTokenizer('tokenizeOpenTag', $text);
+		
+		$this->assertCount(3, $tokens);
+		$this->assertEquals(Token::ANGLE_BRACKET_LEFT, $tokens[0]->type);
+		$this->assertEquals(Token::TAGNAME, $tokens[1]->type);
+		$this->assertEquals('name', $tokens[1]->raw);
+		$this->assertEquals(Token::ANGLE_BRACKET_RIGHT, $tokens[2]->type);
+		
+		/* Namespaced tag names are not (yet) supported by the specification as of 2014-09-05 (YYYY-MM-DD)
+		$text = '<ns:name />';
+		$tokens = $this->callTokenizer('tokenizeOpenTag', $text);
+		
+		$this->assertCount(3, $tokens);
+		$this->assertEquals(Token::ANGLE_BRACKET_LEFT, $tokens[0]->type);
+		$this->assertEquals(Token::TAGNAME, $tokens[1]->type);
+		$this->assertEquals('ns:name', $tokens[1]->raw);
+		$this->assertEquals(Token::WHITESPACE, $tokens[2]->type);
+		$this->assertEquals(Token::SLASH, $tokens[3]->type);
+		$this->assertEquals(Token::ANGLE_BRACKET_RIGHT, $tokens[4]->type);
+		 */
+		
+		$text = '<tagname attr1=foo attr2="bar" />';
+		$tokens = $this->callTokenizer('tokenizeOpenTag', $text);
+		
+		$this->assertCount(13, $tokens);
+		
+		$this->assertEquals(Token::ANGLE_BRACKET_LEFT, $tokens[0]->type);
+		
+		$this->assertEquals(Token::TAGNAME, $tokens[1]->type);
+		$this->assertEquals('tagname', $tokens[1]->raw);
+		
+		$this->assertEquals(Token::WHITESPACE, $tokens[2]->type);
+		
+		$this->assertEquals(Token::ATTRIBUTE_NAME, $tokens[3]->type);
+		$this->assertEquals('attr1', $tokens[3]->raw);
+		
+		$this->assertEquals(Token::EQUALS, $tokens[4]->type);
+		
+		$this->assertEquals(Token::ATTRIBUTE_VALUE, $tokens[5]->type);
+		$this->assertEquals('foo', $tokens[5]->raw);
+		$this->assertEquals(AttributeValueToken::UNQUOTED, $tokens[5]->quoting);
+		
+		$this->assertEquals(Token::WHITESPACE, $tokens[6]->type);
+		
+		$this->assertEquals(Token::ATTRIBUTE_NAME, $tokens[7]->type);
+		$this->assertEquals('attr2', $tokens[7]->raw);
+		
+		$this->assertEquals(Token::EQUALS, $tokens[8]->type);
+		
+		$this->assertEquals(Token::ATTRIBUTE_VALUE, $tokens[9]->type);
+		$this->assertEquals('bar', $tokens[9]->raw);
+		$this->assertEquals(AttributeValueToken::DOUBLE_QUOTED, $tokens[9]->quoting);
+		
+		$this->assertEquals(Token::WHITESPACE, $tokens[10]->type);
+		
+		$this->assertEquals(Token::SLASH, $tokens[11]->type);
+		
+		$this->assertEquals(Token::ANGLE_BRACKET_RIGHT, $tokens[12]->type);
+	}
+	
+	/**
+	 * @test
+	 * @covers ::tokenizeClosingTag
+	 * @covers ::tokenizeTagName
+	 * @covers ::readTagName
+	 */
+	public function testClosingTag() {
+		$text = '</name >';
+		$tokens = $this->callTokenizer('tokenizeClosingTag', $text);
+		
+		$this->assertCount(5, $tokens);
+		
+		$this->assertEquals(Token::ANGLE_BRACKET_LEFT, $tokens[0]->type);
+		
+		$this->assertEquals(Token::SLASH, $tokens[1]->type);
+		
+		$this->assertEquals(Token::TAGNAME, $tokens[2]->type);
+		$this->assertEquals('name', $tokens[2]->raw);
+		
+		$this->assertEquals(Token::WHITESPACE, $tokens[3]->type);
+		
+		$this->assertEquals(Token::ANGLE_BRACKET_RIGHT, $tokens[4]->type);
 	}
 }
