@@ -36,6 +36,7 @@ class Token {
 	const NEWLINE = 2;
 	const TEXT = 3;
 	const BLANKLINE = 4;
+	const ESCAPED = 5;
 	
 	const MINUS = 100;
 	const EQUALS = 101;
@@ -48,6 +49,7 @@ class Token {
 	const DOUBLE_QUOTE = 108;
 	const COLON = 109;
 	const SLASH = 110;
+	const BACKSLASH = 111;
 	
 	const PARENTHESIS_LEFT = 200;
 	const PARENTHESIS_RIGHT = 201;
