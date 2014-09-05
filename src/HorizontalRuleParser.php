@@ -53,6 +53,11 @@ class HorizontalRuleParser implements ParserInterface {
 		}
 		
 		$type = $tokens[0]->type;
+		
+		if (($type !== Token::STAR) && ($type !== Token::MINUS) && ($type !== Token::UNDERSCORE)) {
+			return false;
+		}
+		
 		$counter = 0;
 		
 		for ($i=0; $i<\count($tokens); $i++) {
