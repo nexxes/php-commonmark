@@ -24,32 +24,66 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd;
+namespace nexxes\stmd\parser;
+
+use \nexxes\stmd\token\Token;
+use \nexxes\stmd\structure\Block;
+use \nexxes\stmd\structure\Type;
 
 /**
+ * Description of ParagraphParser
  *
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-interface ParserInterface {
+class ParagraphParser implements ParserInterface {
 	/**
-	 * Inject the main parser for parsing of nested blocks
-	 * @param type $mainParser
+	 * @var Parser
 	 */
-	function __construct($mainParser);
+	private $mainParser;
 	
 	/**
-	 * Checks if this parser can parse the next line of input
-	 * 
-	 * @param array<\nexxes\stmd\token\Token> $tokens
-	 * @return bool
+	 * {@inheritdoc}
 	 */
-	function canParse(array &$tokens);
-	
+	public function __construct($mainParser) {
+		$this->mainParser = $mainParser;
+	}
+
 	/**
-	 * Return the structure parsed with this parser for the supplied input stream
-	 * 
-	 * @param array<\nexxes\stmd\token\Token> $tokens
-	 * @return array
+	 * {@inheritdoc}
 	 */
-	function parse(array &$tokens);
+	public function canParse(array $tokens) {
+		return true;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function parse(Block $parent, array $tokens) {
+		$my_tokens = [];
+		
+		while (null !== ($token = \array_shift($tokens))) {
+			// Blankline terminates paragraph
+			if ($token->type === Token::BLANKLINE) {
+				break;
+			}
+			
+			// Read tokens
+			$my_tokens[] = $token;
+			
+			// Last token was newline, so check if someone wants to interrupt the paragraph
+			if (($token->type === Token::NEWLINE) && $this->mainParser->canInterrupt($tokens)) {
+				break;
+			}
+		}
+		
+		// Remove trailing linebreak
+		if (count($my_tokens) && ($my_tokens[\count($my_tokens)-1]->type === Token::NEWLINE)) {
+			\array_pop($my_tokens);
+		}
+		
+		// Store struct
+		$parent[] = new Block(Type::LEAF_PARAGRAPH, $parent, $my_tokens);
+		
+		return $tokens;
+	}
 }
