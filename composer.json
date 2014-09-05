@@ -1,0 +1,17 @@
+{
+	"name": "nexxes/StandardMarkdown",
+	"description": "PHP Parser for Standard Markdown",
+	
+	"authors": [
+		{
+			"name": "Dennis Birkholz, nexxes Informationstechnik GmbH",
+			"email": "dennis.birkholz@nexxes.net"
+		}
+	],
+	
+	"autoload": {
+		"psr-4": {
+			"nexxes\\stmd\\": "src/"
+		}
+	}
+}
