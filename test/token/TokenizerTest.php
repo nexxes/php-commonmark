@@ -258,7 +258,7 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(Token::EQUALS, $tokens[2]->type);
 		$this->assertEquals(Token::WHITESPACE, $tokens[3]->type);
 		$this->assertEquals(Token::ATTRIBUTE_VALUE, $tokens[4]->type);
-		$this->assertEquals('attrValue', $tokens[4]->raw);
+		$this->assertEquals('attrValue', $tokens[4]->value);
 		$this->assertEquals(AttributeValueToken::DOUBLE_QUOTED, $tokens[4]->quoting);
 		
 		$text = '   attrName=\'attr"#`Value\'';
@@ -270,7 +270,7 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('attrName', $tokens[1]->raw);
 		$this->assertEquals(Token::EQUALS, $tokens[2]->type);
 		$this->assertEquals(Token::ATTRIBUTE_VALUE, $tokens[3]->type);
-		$this->assertEquals('attr"#`Value', $tokens[3]->raw);
+		$this->assertEquals('attr"#`Value', $tokens[3]->value);
 		$this->assertEquals(AttributeValueToken::SINGLE_QUOTED, $tokens[3]->quoting);
 	}
 	
@@ -359,7 +359,7 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(Token::EQUALS, $tokens[8]->type);
 		
 		$this->assertEquals(Token::ATTRIBUTE_VALUE, $tokens[9]->type);
-		$this->assertEquals('bar', $tokens[9]->raw);
+		$this->assertEquals('bar', $tokens[9]->value);
 		$this->assertEquals(AttributeValueToken::DOUBLE_QUOTED, $tokens[9]->quoting);
 		
 		$this->assertEquals(Token::WHITESPACE, $tokens[10]->type);
