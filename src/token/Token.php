@@ -35,6 +35,7 @@ class Token {
 	const WHITESPACE = 1;
 	const NEWLINE = 2;
 	const TEXT = 3;
+	const BLANKLINE = 4;
 	
 	const MINUS = 100;
 	const EQUALS = 101;

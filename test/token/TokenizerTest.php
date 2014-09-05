@@ -32,15 +32,6 @@ namespace nexxes\stmd\token;
  */
 class TokenizerTest extends \PHPUnit_Framework_TestCase {
 	/**
-	 * @param string $text
-	 * @return array<Token>
-	 */
-	private function tokenize($text) {
-		$tokenizer = new Tokenizer($text);
-		return $tokenizer->run();
-	}
-	
-	/**
 	 * Little helper to call a private method in the tokenizer class and execute it with one parameter
 	 * 
 	 * @param string $method Name of the private method to call
@@ -104,17 +95,21 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * @test 
+	 * @test
+	 * @covers ::tokenizeWhitespace
+	 * @covers ::readWhitespace
+	 * @covers ::postProcess
 	 */
 	public function testNewline() {
 		$text = "\n\n\r\n\r";
-		$tokens = $this->tokenize($text);
+		$tokenizer = new Tokenizer($text);
+		$tokens = $tokenizer->run();
 		
 		$this->assertCount(4, $tokens);
-		$this->assertInstanceOf(NewlineToken::class, $tokens[0]);
-		$this->assertInstanceOf(NewlineToken::class, $tokens[1]);
-		$this->assertInstanceOf(NewlineToken::class, $tokens[2]);
-		$this->assertInstanceOf(NewlineToken::class, $tokens[3]);
+		$this->assertEquals(Token::NEWLINE, $tokens[0]->type);
+		$this->assertEquals(Token::BLANKLINE, $tokens[1]->type);
+		$this->assertEquals(Token::BLANKLINE, $tokens[2]->type);
+		$this->assertEquals(Token::BLANKLINE, $tokens[3]->type);
 	}
 	
 	/**
@@ -123,7 +118,8 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testSingleCharTokens() {
 		$text = ':([<\'"' . "\r\n\n\r" . '"\'>])';
-		$tokens = $this->tokenize($text);
+		$tokenizer = new Tokenizer($text);
+		$tokens = $tokenizer->run();
 		
 		$this->assertCount(\strlen($text)-1, $tokens);
 		
@@ -134,8 +130,8 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(Token::SINGLE_QUOTE, $tokens[4]->type);
 		$this->assertEquals(Token::DOUBLE_QUOTE, $tokens[5]->type);
 		$this->assertEquals(Token::NEWLINE, $tokens[6]->type);
-		$this->assertEquals(Token::NEWLINE, $tokens[7]->type);
-		$this->assertEquals(Token::NEWLINE, $tokens[8]->type);
+		$this->assertEquals(Token::BLANKLINE, $tokens[7]->type);
+		$this->assertEquals(Token::BLANKLINE, $tokens[8]->type);
 		$this->assertEquals(Token::DOUBLE_QUOTE, $tokens[9]->type);
 		$this->assertEquals(Token::SINGLE_QUOTE, $tokens[10]->type);
 		$this->assertEquals(Token::ANGLE_BRACKET_RIGHT, $tokens[11]->type);

@@ -70,8 +70,12 @@ class Tokenizer {
 	
 	
 	public function __construct($data) {
-		$this->raw = $data;
-		$this->length = \strlen($data);
+		// Tidy newlines
+		$data1 = \str_replace("\r\n", "\n", $data);
+		$data2 = \str_replace("\r", "\n", $data1);
+		
+		$this->raw = $data2;
+		$this->length = \strlen($this->raw);
 	}
 	
 	/**
@@ -82,8 +86,59 @@ class Tokenizer {
 		return $this->tokens;
 	}
 	
+	/**
+	 * @param array<\nexxes\stmd\token\Token> $tokens
+	 */
+	public function postProcess(array $tokens) {
+		$count = \count($tokens);
+		
+		for ($i=0; $i<$count; $i++) {
+			// Allow to unset elements
+			if (!isset($tokens[$i])) { continue; }
+			
+			// Current token
+			$token = $tokens[$i];
+			
+			// Replace tabs with 4 spaces
+			if ($token->type === Token::WHITESPACE) {
+				$token->raw = \str_replace("\t", '    ', $token->raw);
+				$token->length = \strlen($token->raw);
+				continue;
+			}
+			
+			// Try to find blank lines
+			if (($token->type === Token::NEWLINE) || ($token->type === Token::BLANKLINE)) {
+				// If next token is also a newline, it is actually a blank line
+				if (isset($tokens[$i+1])
+					&& ($tokens[$i+1]->type === Token::NEWLINE)) {
+					$tokens[$i+1] = new Token(Token::BLANKLINE, $tokens[$i+1]->line, 1, "\n");
+				}
+				
+				// Check if next token is whitespace followed by newline => blankline
+				elseif (isset($tokens[$i+1])
+					&& isset($tokens[$i+2])
+					&& ($tokens[$i+1]->type === Token::WHITESPACE)
+					&& ($tokens[$i+2]->type === Token::NEWLINE)) {
+					$tokens[$i+2] = new Token(Token::BLANKLINE, $tokens[$i+1]->line, 1, "\n");
+					unset($tokens[$i+1]);
+				}
+				
+				continue;
+			}
+		}
+		
+		return \array_values($tokens);
+	}
+	
 	public function run() {
 		$tokenizers = [
+			'tokenizeProcessingInstruction',
+			'tokenizeHTMLComment',
+			'tokenizeCData',
+			//'tokenizeDeclaration',
+			'tokenizeClosingTag',
+			'tokenizeOpenTag',
+			
 			'tokenizeNewline',
 			
 			// Tokenizer methods that read a single char
@@ -107,6 +162,8 @@ class Tokenizer {
 			'tokenizeUnderscore',
 		];
 		
+		// Used to determine if texttoken is not last token any more
+		$lastCount = 0;
 		
 		while ($this->pos < $this->length) {
 			foreach ($tokenizers AS $tokenizer) {
@@ -115,10 +172,20 @@ class Tokenizer {
 				}
 			}
 			
+			if (!isset($textToken) || (\count($this->tokens) > $lastCount)) {
+				$textToken = new Token(Token::TEXT, $this->line, $this->column, "");
+				$this->tokens[] = $textToken;
+				$lastCount = \count($this->tokens);
+			}
+			
+			$textToken->raw .= $this->raw[$this->pos];
+			$textToken->length++;
+			
 			$this->pos++;
+			$this->column++;
 		}
 		
-		return $this->tokens;
+		return $this->postProcess($this->tokens);
 	}
 	
 	private function tokenizeNewline() {
@@ -138,7 +205,7 @@ class Tokenizer {
 			return false;
 		}
 		
-		$this->tokens[] = new NewlineToken(Token::NEWLINE, $this->line, $this->column, $found);
+		$this->tokens[] = new Token(Token::NEWLINE, $this->line, $this->column, $found);
 		$this->line++;
 		$this->column = 1;
 		
