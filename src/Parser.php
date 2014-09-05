@@ -103,12 +103,12 @@ class Parser {
 		return $struct;
 	}
 	
-	public function parseInline(array &$tokens) {
+	public function parseInline(array &$tokens, $oneLineOnly = false) {
 		$struct = [];
 		
 		while (\count($tokens)) {
-			// Inline parsing should only read a single line
-			if ($tokens[0]->type === Token::NEWLINE) {
+			// You may want to read only one line with inline parsing
+			if ($oneLineOnly && ($tokens[0]->type === Token::NEWLINE)) {
 				\array_shift($tokens);
 				break;
 			}
