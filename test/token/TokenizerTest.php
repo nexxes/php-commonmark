@@ -84,22 +84,22 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testRepeatedSingleCharTokens() {
 		$tests = [
-			[ '```', Token::BACKTICK ],
-			[ '=========', Token::EQUALS ],
-			[ '###', Token::HASH ],
-			[ '-----', Token::MINUS ],
-			[ '*****', Token::STAR ],
-			[ '~~', Token::TILDE ],
-			[ '_', Token::UNDERSCORE ],
+			[ 'tokenizeBacktick', '```', Token::BACKTICK ],
+			[ 'tokenizeEquals', '=========', Token::EQUALS ],
+			[ 'tokenizeHash', '###', Token::HASH ],
+			[ 'tokenizeMinus', '-----', Token::MINUS ],
+			[ 'tokenizeStar', '*****', Token::STAR ],
+			[ 'tokenizeTilde', '~~', Token::TILDE ],
+			[ 'tokenizeUnderscore', '_', Token::UNDERSCORE ],
 		];
 		
-		foreach ($tests AS list($testString, $tokenType)) {
-			$tokens = $this->tokenize($testString);
+		foreach ($tests AS list($method, $text, $tokenType)) {
+			$tokens = $this->callTokenizer($method, $text);
 			
-			$this->assertCount(1, $tokens);
+			$this->assertCount(1, $tokens, 'Token missing, method: ' . $method);
 			$this->assertEquals($tokenType, $tokens[0]->type);
-			$this->assertEquals(\strlen($testString), $tokens[0]->length);
-			$this->assertEquals($testString, $tokens[0]->raw);
+			$this->assertEquals(\strlen($text), $tokens[0]->length);
+			$this->assertEquals($text, $tokens[0]->raw);
 		}
 	}
 	
