@@ -26,11 +26,14 @@
 
 namespace nexxes\stmd;
 
+use \nexxes\stmd\struct\Container;
 use \nexxes\stmd\struct\InlineCode;
+use \nexxes\stmd\struct\Literal;
 use \nexxes\stmd\token\Token;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
+ * @link http://jgm.github.io/stmd/spec.html#code-span
  */
 class InlineCodeParser implements ParserInterface {
 	private $mainParser;
@@ -46,17 +49,20 @@ class InlineCodeParser implements ParserInterface {
 	 * {@inheritdoc}
 	 */
 	public function canParse(array &$tokens) {
-		if (!isset($tokens[0]) || ($tokens[0]->type !== Token::BACKTICK)) {
-			return false;
-		}
+		$start = null;
 		
-		for ($i=1; $i<\count($tokens); $i++) {
-			if ($tokens[$i]->type === Token::BACKTICK) {
-				return true;
-			}
-			
-			if ($tokens[$i]->type === Token::NEWLINE) {
-				return false;
+		for ($i=0; $i<\count($tokens); $i++) {
+			// Found a backtick with not more than three backticks in total
+			if (($tokens[$i]->type === Token::BACKTICK) && ($tokens[$i]->length <= 3)) {
+				// First backtick encounter
+				if ($start === null) {
+					$start = $tokens[$i];
+				}
+				
+				// Found matching closing backtick
+				elseif ($start->length === $tokens[$i]->length) {
+					return true;
+				}
 			}
 		}
 		
@@ -67,19 +73,52 @@ class InlineCodeParser implements ParserInterface {
 	 * {@inheritdoc}
 	 */
 	public function parse(array &$tokens) {
-		// Remove first backtick
-		\array_shift($tokens);
-		
-		$my_tokens = [];
-		
+		// Remove tokens we do note quote
+		$tokens_before = [];
 		while ($tokens[0]->type !== Token::BACKTICK) {
-			$my_tokens = \array_shift($tokens);
+			$tokens_before[] = \array_shift($tokens);
 		}
 		
-		// Remove second backtick
+		// First backtick
+		$start = \array_shift($tokens);
+		
+		// Take everything up to the second delimiter
+		$my_tokens = [];
+		while (($tokens[0]->type !== Token::BACKTICK) || ($tokens[0]->length !== $start->length)) {
+			$token = \array_shift($tokens);
+			
+			// Replace newlines by spaces
+			if ($token->type === Token::NEWLINE) {
+				$token->type = Token::WHITESPACE;
+			}
+			
+			// Trim all whitespace
+			if ($token->type === Token::WHITESPACE) {
+				$token->raw = ' ';
+				$token->length = 1;
+				
+				// Skip whitespace if previous token is already whitespace
+				if (isset($my_tokens[\count($my_tokens)-1]) && ($my_tokens[\count($my_tokens)-1]->type === Token::WHITESPACE)) {
+					continue;
+				}
+			}
+			
+			// Store tokens
+			$my_tokens[] = $token;
+		}
+		
+		// Remove closing backtick
 		\array_shift($tokens);
 		
-		return new InlineCode($this->mainParser->inlineParse($my_tokens));
+		// Remove leading and trailing whitespace
+		if (isset($my_tokens[0]) && ($my_tokens[0]->type === Token::WHITESPACE)) {
+			\array_shift($my_tokens);
+		}
+		if (isset($my_tokens[\count($my_tokens)-1]) && ($my_tokens[\count($my_tokens)-1]->type === Token::WHITESPACE)) {
+			\array_pop($my_tokens);
+		}
+		
+		return new Container($this->mainParser->parseInline($tokens_before), new InlineCode(new Literal($my_tokens)));
 	}
 
 }
