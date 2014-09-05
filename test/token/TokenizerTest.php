@@ -63,6 +63,22 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 	}
 	
 	/**
+	 * Call one of the private tokenizeXXX methods of the Tokenizer class
+	 * 
+	 * @param string $method Name of the private method to call
+	 * @param string $text The text to supply as first (and only) argument
+	 */
+	private function callTokenizer($method, $text) {
+		$tokenizer = new Tokenizer($text);
+		
+		$reflectionClass = new \ReflectionClass(Tokenizer::class);
+		$exec = $reflectionClass->getMethod($method);
+		$exec->setAccessible(true);
+		$exec->invoke($tokenizer);
+		return $tokenizer->getTokens();
+	}
+	
+	/**
 	 * Tests token types that consist of a single char that may be repeated multiple times
 	 * @test 
 	 */
@@ -161,5 +177,18 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		
 		$text4 = "Ein Test\n";
 		$this->assertEquals(0, $this->callPrivate('lastLineLength', $text4, true));
+	}
+	
+	/**
+	 * @test
+	 * @covers ::tokenizeHTMLComment
+	 * @covers ::tokenizeMultilineRawData
+	 */
+	public function testHTMLCommentToken() {
+		$text = "<!-- Foo\nBar\r\nBlubb -->";
+		$tokens = $this->callTokenizer('tokenizeHTMLComment', $text);
+		
+		$this->assertCount(1, $tokens);
+		$this->assertEquals(Token::HTML_COMMENT, $tokens[0]->type);
 	}
 }

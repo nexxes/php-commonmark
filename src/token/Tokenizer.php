@@ -74,6 +74,14 @@ class Tokenizer {
 		$this->length = \strlen($data);
 	}
 	
+	/**
+	 * Get the list of tokens created in the last run
+	 * @return array<Token>
+	 */
+	public function getTokens() {
+		return $this->tokens;
+	}
+	
 	public function run() {
 		$tokenizers = [
 			'tokenizeNewline',
@@ -230,6 +238,68 @@ class Tokenizer {
 		
 		$this->tokens[] = new CharToken($tokenType, $this->line, $this->column, $raw);
 		$this->column += $count;
+		
+		return true;
+	}
+	
+	/**
+	 * Try to read an HTML comment from the string to tokenize
+	 * @return boolean
+	 * @link http://jgm.github.io/stmd/spec.html#html-comment
+	 */
+	private function tokenizeHTMLComment() {
+		return $this->tokenizeMultilineRawData(Token::HTML_COMMENT, '<!--', '-->', '--');
+	}
+	
+	/**
+	 * Read a processing instruction
+	 * @return boolean
+	 * @link http://jgm.github.io/stmd/spec.html#processing-instruction
+	 */
+	private function tokenizeProcessingInstruction() {
+		return $this->tokenizeMultilineRawData(Token::PROCESSING_INSTRUCTIONS, '<?', '?>');
+	}
+	
+	/**
+	 * Read a CDATA section
+	 * @return boolean
+	 * @link http://jgm.github.io/stmd/spec.html#cdata-section
+	 */
+	private function tokenizeCData() {
+		return $this->tokenizeMultilineRawData(Token::CDATA, '<![CDATA[', ']]>');
+	}
+	
+	/**
+	 * Try to parse raw data like HTML comments, processing data, CDATA, etc
+	 * 
+	 * @param string $startDelimiter String this block starts with
+	 * @param string $endDelimiter String this block ends with
+	 * @param string $doNotContain String that must noch exists within, defaults to endDelimiter
+	 * @return boolean
+	 */
+	private function tokenizeMultilineRawData($tokenType, $startDelimiter, $endDelimiter, $doNotContain = null) {
+		// Test if start delimiter follows
+		if (\substr($this->raw, $this->pos, \strlen($startDelimiter)) !== $startDelimiter) {
+			return false;
+		}
+		
+		// Try to find end delimiter
+		if (false === ($endpos = \strpos($this->raw, $endDelimiter, $this->pos+\strlen($startDelimiter)))) {
+			throw new \RuntimeException('Can not find end delimiter ' . $endDelimiter . ' for start delimiter ' . $startDelimiter . ' in line ' . $this->line . ', character ' . $this->pos);
+		}
+		
+		// Search for $doNotContain element
+		if (($doNotContain !== null) && (false !== ($failpos = \strpos($this->raw, $doNotContain, $this->pos + \strlen($startDelimiter)))) && ($failpos < $endpos)) {
+			throw new \RuntimeException('Found illegal string sequence ' . $doNotContain . ' for start delimiter ' . $startDelimiter . ' in line ' . $this->line . ', character ' . $this->pos);
+		}
+		
+		$tokenLength = $endpos - $this->pos + \strlen($endDelimiter);
+		$tokenText = \substr($this->raw, $this->pos, $tokenLength);
+		$this->tokens[] = new Token($tokenType, $this->line, $this->column, $tokenText);
+		
+		$this->line += $this->countLinebreaks($tokenText);
+		$this->column = $this->lastLineLength($tokenText)+1;
+		$this->pos += $tokenLength;
 		
 		return true;
 	}
