@@ -34,6 +34,9 @@ use nexxes\stmd\token\Token;
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
 class ParagraphParser implements ParserInterface {
+	/**
+	 * @var Parser
+	 */
 	private $mainParser;
 	
 	/**
@@ -56,26 +59,28 @@ class ParagraphParser implements ParserInterface {
 	public function parse(array &$tokens) {
 		$my_tokens = [];
 		
-		// Use everything until blank line
-		while (count($tokens) && ($tokens[0]->type !== Token::BLANKLINE)) {
+		while (count($tokens)) {
+			// Blankline terminates paragraph
+			if ($tokens[0]->type === Token::BLANKLINE) {
+				\array_shift($tokens);
+				break;
+			}
+			
+			// Read tokens
 			$my_tokens[] = \array_shift($tokens);
+			
+			// Last token was newline, so check if someone wants to interrupt the paragraph
+			if (($my_tokens[\count($my_tokens)-1]->type === Token::NEWLINE) && $this->mainParser->canInterrupt($tokens)) {
+				break;
+			}
 		}
-		
-		// Remove blank line
-		\array_shift($tokens);
 		
 		// Remove trailing linebreak
 		if ($my_tokens[\count($my_tokens)-1]->type === Token::NEWLINE) {
 			\array_pop($my_tokens);
 		}
 		
-		// FIXME: use inline parser
-		$text = '';
-		foreach ($my_tokens AS $token) {
-			$text .= $token->raw;
-		}
-		
-		return new struct\Paragraph($text);
+		return new struct\Paragraph($this->mainParser->parseInline($my_tokens));
 	}
 
 }

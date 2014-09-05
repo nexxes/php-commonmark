@@ -30,13 +30,23 @@ namespace nexxes\stmd\struct;
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
 class Paragraph {
-	private $content;
+	/**
+	 * Structs of children
+	 */
+	public $content;
 	
 	public function __construct($content) {
 		$this->content = $content;
 	}
 	
 	public function __toString() {
-		return '<p>' . $this->content . '</p>' . PHP_EOL;
+		$r = '<p>';
+		
+		foreach ($this->content AS $struct) {
+			$r .= $struct;
+		}
+		
+		$r .= '</p>' . PHP_EOL;
+		return $r;
 	}
 }
