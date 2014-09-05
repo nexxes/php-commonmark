@@ -57,12 +57,17 @@ class ParagraphParser implements ParserInterface {
 		$my_tokens = [];
 		
 		// Use everything until blank line
-		while (isset($tokens) && ($tokens[0]->type !== Token::NEWLINE)) {
+		while (count($tokens) && ($tokens[0]->type !== Token::BLANKLINE)) {
 			$my_tokens[] = \array_shift($tokens);
 		}
 		
 		// Remove blank line
 		\array_shift($tokens);
+		
+		// Remove trailing linebreak
+		if ($my_tokens[\count($my_tokens)-1]->type === Token::NEWLINE) {
+			\array_pop($my_tokens);
+		}
 		
 		// FIXME: use inline parser
 		$text = '';
