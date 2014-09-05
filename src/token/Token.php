@@ -57,6 +57,13 @@ class Token {
 	const ANGLE_BRACKET_RIGHT = 207;
 	
 	const HTML = 300;
+	const HTML_COMMENT = 301;
+	const CDATA = 302;
+	const PROCESSING_INSTRUCTIONS = 303;
+	const DECLARATION = 304;
+	const TAGNAME = 305;
+	const ATTRIBUTE_NAME = 306;
+	const ATTRIBUTE_VALUE = 307;
 	
 	/**
 	 * The actual type of the token
