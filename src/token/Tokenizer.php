@@ -132,16 +132,19 @@ class Tokenizer {
 	
 	public function run() {
 		$tokenizers = [
-			'tokenizeProcessingInstruction',
-			'tokenizeHTMLComment',
-			'tokenizeCData',
-			//'tokenizeDeclaration',
-			'tokenizeClosingTag',
-			'tokenizeOpenTag',
+			//'tokenizeProcessingInstruction',
+			//'tokenizeHTMLComment',
+			//'tokenizeCData',
+			//  'tokenizeDeclaration',
+			//'tokenizeClosingTag',
+			//'tokenizeOpenTag',
 			
 			'tokenizeNewline',
 			
+			'tokenizeBackslashEscapes',
+			
 			// Tokenizer methods that read a single char
+			'tokenizeBackslash',
 			'tokenizeColon',
 			'tokenizeSingleQuote',
 			'tokenizeDoubleQuote',
@@ -212,6 +215,10 @@ class Tokenizer {
 		$this->column = 1;
 		
 		return true;
+	}
+	
+	private function tokenizeBackslash() {
+		return $this->tokenizeChar('\\', Token::BACKSLASH);
 	}
 	
 	private function tokenizeColon() {
@@ -540,13 +547,24 @@ class Tokenizer {
 	 * @link http://jgm.github.io/stmd/spec.html#open-tag
 	 */
 	private function tokenizeOpenTag() {
+		$pos = $this->pos;
+		
 		// Get required angular bracket
-		if ($this->raw[$this->pos] !== '<') {
+		if ($this->raw[$pos] !== '<') {
 			return false;
+		} else {
+			$pos++;
 		}
 		
 		// Get alphanumberic tag name
-		if (false === ($tagname = $this->readTagName($this->pos+1))) {
+		if (false === ($tagname = $this->readTagName($pos))) {
+			return false;
+		} else {
+			$pos += \strlen($tagname);
+		}
+		
+		// Require whitespace or closing tag
+		if (($this->raw[$pos] !== ' ') && ($this->raw[$pos]) !== '>') {
 			return false;
 		}
 		
@@ -638,6 +656,233 @@ class Tokenizer {
 		return $tagname;
 	}
 	
+	private function tokenizeURI() {
+		if (false === ($schema = $this->readSchema($this->pos))) {
+			return false;
+		}
+		
+		$schema .= ':';
+		
+		$this->pos += \strlen($schema);
+		
+		while ($this->pos < $this->length) {
+			if ((\ord($this->raw[$this->pos]) < 32) // Control characters
+				|| ($this->raw[$this->pos] === ' ')
+				|| ($this->raw[$this->pos] === '<')
+				|| ($this->raw[$this->pos] === '>')) {
+				break;
+			}
+			
+			$schema .= $this->raw[$this->pos];
+			$this->pos++;
+		}
+		
+		$this->column += \strlen($schema);
+	}
+	
+	/**
+	 * Try to read a schema from the input.
+	 * @return string
+	 */
+	private function readSchema($pos) {
+		$schemes = [
+			'coap',
+			'doi',
+			'aaa',
+			'aaas',
+			'about',
+			'acap',
+			'cap',
+			'cid',
+			'crid',
+			'data',
+			'dav',
+			'dict',
+			'dns',
+			'file',
+			'ftp',
+			'geo',
+			'go',
+			'gopher',
+			'h323',
+			'http',
+			'https',
+			'iax',
+			'icap',
+			'im',
+			'imap',
+			'info',
+			'ipp',
+			'iris',
+			'iris.beep',
+			'iris.xpc',
+			'iris.xpcs',
+			'iris.lwz',
+			'javascript',
+			'ldap',
+			'mailto',
+			'mid',
+			'msrp',
+			'msrps',
+			'mtqp',
+			'mupdate',
+			'news',
+			'nfs',
+			'ni',
+			'nih',
+			'nntp',
+			'opaquelocktoken',
+			'pop',
+			'pres',
+			'rtsp',
+			'service',
+			'session',
+			'shttp',
+			'sieve',
+			'sip',
+			'sips',
+			'sms',
+			'snmp',
+			'soap.beep',
+			'soap.beeps',
+			'tag',
+			'tel',
+			'telnet',
+			'tftp',
+			'thismessage',
+			'tn3270',
+			'tip',
+			'tv',
+			'urn',
+			'vemmi',
+			'ws',
+			'wss',
+			'xcon',
+			'xcon-userid',
+			'xmlrpc.beep',
+			'xmlrpc.beeps',
+			'xmpp',
+			'z39.50r',
+			'z39.50s',
+			'adiumxtra',
+			'afp',
+			'afs',
+			'aim',
+			'apt',
+			'attachment',
+			'aw',
+			'beshare',
+			'bitcoin',
+			'bolo',
+			'callto',
+			'chrome',
+			'chrome-extension',
+			'com-eventbrite-attendee',
+			'content',
+			'cvs',
+			'dlna-playsingle',
+			'dlna-playcontainer',
+			'dtn',
+			'dvb',
+			'ed2k',
+			'facetime',
+			'feed',
+			'finger',
+			'fish',
+			'gg',
+			'git',
+			'gizmoproject',
+			'gtalk',
+			'hcp',
+			'icon',
+			'ipn',
+			'irc',
+			'irc6',
+			'ircs',
+			'itms',
+			'jar',
+			'jms',
+			'keyparc',
+			'lastfm',
+			'ldaps',
+			'magnet',
+			'maps',
+			'market',
+			'message',
+			'mms',
+			'ms-help',
+			'msnim',
+			'mumble',
+			'mvn',
+			'notes',
+			'oid',
+			'palm',
+			'paparazzi',
+			'platform',
+			'proxy',
+			'psyc',
+			'query',
+			'res',
+			'resource',
+			'rmi',
+			'rsync',
+			'rtmp',
+			'secondlife',
+			'sftp',
+			'sgn',
+			'skype',
+			'smb',
+			'soldat',
+			'spotify',
+			'ssh',
+			'steam',
+			'svn',
+			'teamspeak',
+			'things',
+			'udp',
+			'unreal',
+			'ut2004',
+			'ventrilo',
+			'view-source',
+			'webcal',
+			'wtai',
+			'wyciwyg',
+			'xfire',
+			'xri',
+			'ymsgr',
+		];
+		
+		$name = '';
+		
+		while ($pos < $this->length) {
+			// Could not get another part
+			if (false === ($part = $this->readTagName($pos))) {
+					return false;
+			}
+			
+			$name .= $part;
+			$pos += \strlen($part);
+			
+			// Next char is a colon, so check if schema is valid, otherwise no schema is readable
+			if (isset($this->raw[$pos]) && ($this->raw[$pos] === ':')) {
+				return (\in_array($name, $schemes) ? $name : false);
+			}
+			
+			// Read dot or hyphen for constructed schemas
+			if (isset($this->raw[$pos]) && (($this->raw[$pos] === '.') || ($this->raw[$pos] === '-'))) {
+				$name .= $this->raw[$pos];
+				$pos++;
+			}
+			
+			// Seems to be nothing useful in next char, abort
+			else {
+				return false;
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Count the number of line breaks in a string
 	 * @param string $string
@@ -666,5 +911,21 @@ class Tokenizer {
 		} else {
 			return \strlen($string) - (\max($r, $n)+1);
 		}
+	}
+	
+	private function tokenizeBackslashEscapes() {
+		if ($this->raw[$this->pos] !== '\\') {
+			return false;
+		}
+		
+		if (!isset($this->raw[$this->pos+1]) || (false === \strpos('!"#$%&\'()*+,-./:;<=>?@[]^_`{|}~', $this->raw[$this->pos+1]))) {
+			return false;
+		}
+		
+		$this->tokens[] = new CharToken(Token::ESCAPED, $this->line, $this->column, $this->raw[$this->pos+1]);
+		$this->pos += 2;
+		$this->column += 2;
+		
+		return true;
 	}
 }
