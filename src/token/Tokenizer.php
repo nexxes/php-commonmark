@@ -160,6 +160,8 @@ class Tokenizer {
 			'tokenizeStar',
 			'tokenizeTilde',
 			'tokenizeUnderscore',
+			
+			'tokenizeWhitespace',
 		];
 		
 		// Used to determine if texttoken is not last token any more
