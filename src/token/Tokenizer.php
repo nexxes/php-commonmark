@@ -52,13 +52,13 @@ class Tokenizer {
 	 * Line position in the current tokenizing process
 	 * @var int
 	 */
-	private $line = 0;
+	private $line = 1;
 	
 	/**
 	 * Current char position in $line
 	 * @var int
 	 */
-	private $column = 0;
+	private $column = 1;
 	
 	/**
 	 * List of generated tokens
@@ -132,7 +132,7 @@ class Tokenizer {
 		
 		$this->tokens[] = new NewlineToken(Token::NEWLINE, $this->line, $this->column, $found);
 		$this->line++;
-		$this->column = 0;
+		$this->column = 1;
 		
 		return true;
 	}
