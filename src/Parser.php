@@ -28,6 +28,8 @@ namespace nexxes\stmd;
 
 use \nexxes\stmd\token\Token;
 use \nexxes\stmd\token\Tokenizer;
+use \nexxes\stmd\structure\Block;
+use \nexxes\stmd\structure\Type AS Structs;
 
 /**
  * Description of Parser
@@ -40,15 +42,22 @@ class Parser {
 	const PARAGRAPH = 3;
 	
 	const INLINE_CODE = 'Inline_Code';
+	const LINEBREAK = 'Hard_Line_Break';
 	
 	private $parsers = [];
 	
 	
 	public function __construct() {
+		/*
 		$this->parsers[self::HORIZONTAL_RULE] = new HorizontalRuleParser($this);
 		$this->parsers[self::SETEXT_HEADER] = new SetextHeaderParser($this);
 		$this->parsers[self::PARAGRAPH] = new ParagraphParser($this);
 		$this->parsers[self::INLINE_CODE] = new InlineCodeParser($this);
+		$this->parsers[self::LINEBREAK] = new HardLineBreakParser($this);
+		 */
+		
+		$this->parsers[Structs::CONTAINER_BLOCKQUOTE] = new parser\BlockquoteParser($this);
+		$this->parsers[Structs::LEAF_PARAGRAPH] = new parser\ParagraphParser($this);
 	}
 	
 	public function parseString($string) {
@@ -117,6 +126,10 @@ class Parser {
 				$struct[] = $this->parsers[self::INLINE_CODE]->parse($tokens);
 			}
 			
+			elseif ($this->parsers[self::LINEBREAK]->canParse($tokens)) {
+				$struct[] = $this->parsers[self::LINEBREAK]->parse($tokens);
+			}
+			
 			else {
 				$struct[] = new struct\Literal(\array_shift($tokens));
 			}
@@ -146,20 +159,19 @@ class Parser {
 	 * @return boolean
 	 */
 	public function canInterrupt(array &$tokens) {
-		$this->removeIndentation($tokens);
-		
 		// Empty tokenlist
 		if (!\count($tokens)) {
 			return false;
 		}
 		
-		if ($this->parsers[self::HORIZONTAL_RULE]->canParse($tokens)) {
+		$canParse = $this->canParseBlock($tokens);
+		if (\in_array($canParse, [
+			Structs::CONTAINER_BLOCKQUOTE,
+		])) {
 			return true;
 		}
 		
-		else {
-			return false;
-		}
+		return false;
 	}
 	
 	
@@ -187,5 +199,82 @@ class Parser {
 		
 		\array_shift($tokens);
 		return true;
+	}
+	
+	
+	/**
+	 * Find the next token that is of the specified type.
+	 * List is searched from $offset and is aborted if $count elements have been checked unsuccessfully.
+	 * 
+	 * @param array<Token> $tokens
+	 * @param string $type
+	 * @param int $offset
+	 * @param int $max
+	 * @return int
+	 */
+	public function nextToken(array &$tokens, $type, $offset = 0, $max = null) {
+		$count = \count($tokens);
+		
+		// Reached list ending
+		if ($offset >= $count) {
+			return false;
+		}
+		
+		// Limit search range
+		if ($max !== null) {
+			$count = \min($count, $offset+$max);
+		}
+		
+		// Search for the type
+		for($i=$offset; $i<$count; ++$i) {
+			if ($tokens[$i]->type === $type) {
+				return $i;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Returns the block type that can be parsed from this data.
+	 * If no type is returned, parse as Paragraph.
+	 * 
+	 * @return string
+	 */
+	public function canParseBlock(array &$tokens) {
+		if (!\count($tokens)) {
+			return false;
+		}
+		
+		if ($this->parsers[Structs::CONTAINER_BLOCKQUOTE]->canParse($tokens)) {
+			return Structs::CONTAINER_BLOCKQUOTE;
+		}
+		
+		else {
+			return Structs::LEAF_PARAGRAPH;
+		}
+	}
+	
+	/**
+	 * Execute the parser of type $type. If $type is empty, find the matching parser.
+	 * Returns the remaining tokens
+	 * 
+	 * @param \nexxes\stmd\structure\Block $parent
+	 * @param array<\nexxes\stmd\token\Token> $tokens
+	 * @param string $type
+	 * @return array<\nexxes\stmd\token\Token>
+	 */
+	public function parseBlock(Block $parent, array $tokens, $type = null) {
+		if ($type === null) {
+			$type = $this->canParseBlock($tokens);
+		}
+		
+		if ($type === false) {
+			return $tokens;
+		}
+		
+		echo "Parsing block type: " . $type . PHP_EOL;
+		
+		return $this->parsers[$type]->parse($parent, $tokens);
 	}
 }
