@@ -191,4 +191,34 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertCount(1, $tokens);
 		$this->assertEquals(Token::HTML_COMMENT, $tokens[0]->type);
 	}
+	
+	/**
+	 * Try to read whitespace
+	 * @test
+	 * @covers ::tokenizeWhitespace
+	 * @covers ::readWhitespace
+	 */
+	public function testWhitespaceToken() {
+		$text = ' ';
+		$tokens = $this->callTokenizer('tokenizeWhitespace', $text);
+		$this->assertCount(1, $tokens);
+		$this->assertEquals(Token::WHITESPACE, $tokens[0]->type);
+		$this->assertEquals(\strlen($text), $tokens[0]->length);
+		
+		$text = '      ';
+		$tokens = $this->callTokenizer('tokenizeWhitespace', $text);
+		$this->assertCount(1, $tokens);
+		$this->assertEquals(Token::WHITESPACE, $tokens[0]->type);
+		$this->assertEquals(\strlen($text), $tokens[0]->length);
+		
+		$text = 'xxx';
+		$tokens = $this->callTokenizer('tokenizeWhitespace', $text);
+		$this->assertCount(0, $tokens);
+		
+		$text = "\t  \t ";
+		$tokens = $this->callTokenizer('tokenizeWhitespace', $text);
+		$this->assertCount(1, $tokens);
+		$this->assertEquals(Token::WHITESPACE, $tokens[0]->type);
+		$this->assertEquals(\strlen($text), $tokens[0]->length);
+	}
 }

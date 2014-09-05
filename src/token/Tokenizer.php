@@ -243,6 +243,49 @@ class Tokenizer {
 	}
 	
 	/**
+	 * Try to tokenize whitespace. If $space is supplied, do not try to read previously gathered space but use $space instead
+	 * @param string $space
+	 */
+	private function tokenizeWhitespace($space = null) {
+		if ($space === null) {
+			$space = $this->readWhitespace($this->pos);
+		}
+		
+		if ($space === false) {
+			return false;
+		}
+		
+		$this->tokens[] = new Token(Token::WHITESPACE, $this->line, $this->column, $space);
+		$this->column += \strlen($space);
+		$this->pos += \strlen($space);
+		
+		return true;
+	}
+	
+	/**
+	 * Try to read white space from the supplied position
+	 * White space is only space and tab here.
+	 * Returns false if no white space was available
+	 * 
+	 * @param int $pos
+	 * @return string
+	 */
+	private function readWhitespace($pos) {
+		$space = '';
+		
+		while (($pos < $this->length) && (($this->raw[$pos] === "\t") || ($this->raw[$pos] === ' '))) {
+			$space .= $this->raw[$pos];
+			$pos++;
+		}
+		
+		if ($space === '') {
+			return false;
+		} else {
+			return $space;
+		}
+	}
+	
+	/**
 	 * Try to read an HTML comment from the string to tokenize
 	 * @return boolean
 	 * @link http://jgm.github.io/stmd/spec.html#html-comment
