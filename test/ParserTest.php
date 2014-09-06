@@ -63,6 +63,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	
 	/**
 	 * @test
+	 * @covers \nexxes\stmd\parser\ATXHeaderParser
+	 */
+	public function testATXHeaderParser() {
+		for ($test=23; $test <= 39; ++$test) {
+			if ($test == 27) { continue; } // Requires emphasis
+			if ($test == 30) { continue; } // Requires code block
+			
+			$this->runExample($test);
+		}
+	}
+	
+	/**
+	 * @test
 	 * @covers \nexxes\stmd\parser\BlockquoteParser
 	 */
 	public function testBlockquoteParser() {

@@ -75,23 +75,24 @@ class ParagraphParser implements ParserInterface {
 				break;
 			}
 			
-			// Last token was newline, so check if someone wants to interrupt the paragraph
-			if (($token->type === Token::NEWLINE) && ($this->mainParser->canInterrupt($tokens))) {
-				break;
+			if ($token->type === Token::NEWLINE) {
+				// Last token was newline, so check if someone wants to interrupt the paragraph
+				if ($this->mainParser->canInterrupt($tokens)) {
+					break;
+				}
+				
+				// Remove leading whitespace in next line
+				while (isset($tokens[0]) && ($tokens[0]->type === Token::WHITESPACE)) {
+					\array_shift($tokens);
+				}
 			}
 			
 			// Read tokens
 			$my_tokens[] = $token;
 		}
 		
-		// Trim
-		while (\count($my_tokens) && \in_array($my_tokens[0]->type, [Token::WHITESPACE, Token::NEWLINE])) {
-			\array_shift($my_tokens);
-		}
-		
-		while (\count($my_tokens) && \in_array($my_tokens[\count($my_tokens)-1]->type, [Token::WHITESPACE, Token::NEWLINE])) {
-			\array_pop($my_tokens);
-		}
+		// Remove leading and trailing whitespace
+		$my_tokens = $this->mainParser->trim($my_tokens);
 		
 		// Store struct
 		$parent[] = new Block(Type::LEAF_PARAGRAPH, $parent, $my_tokens);

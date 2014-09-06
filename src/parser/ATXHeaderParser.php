@@ -53,7 +53,7 @@ class ATXHeaderParser implements ParserInterface {
 	 * {@inheritdoc}
 	 */
 	public function canInterrupt(array $tokens) {
-		return false;
+		return $this->canParse($tokens);
 	}
 	
 	/**
@@ -105,24 +105,20 @@ class ATXHeaderParser implements ParserInterface {
 	}
 	
 	public function parseInline(Block $header) {
-		$tokens = $header->getTokens();
-		
 		// Strip whitespace
-		if ($tokens[0]->type === Token::WHITESPACE) {
-			\array_shift($tokens);
-		}
+		$tokens = $this->mainParser->trim($header->getTokens());
 		
 		// Get the level of the header and remove indicator
 		$header->meta['level'] = $tokens[0]->length;
 		\array_shift($tokens);
 		
-		// Remove whitespace
-		$tokens = $this->mainParser->trim($tokens);
-		
 		// Remove header closing
-		if (\count($tokens) && ($tokens[\count($tokens)-1]->type === Token::HASH)) {
+		while (\count($tokens) && ($tokens[\count($tokens)-1]->type === Token::HASH)) {
 			\array_pop($tokens);
 		}
+		
+		// Remove whitespace around inline data
+		$tokens = $this->mainParser->trim($tokens);
 		
 		// Combine string
 		foreach ($tokens AS $token) {
