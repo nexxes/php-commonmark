@@ -75,17 +75,21 @@ class ParagraphParser implements ParserInterface {
 				break;
 			}
 			
-			// Read tokens
-			$my_tokens[] = $token;
-			
 			// Last token was newline, so check if someone wants to interrupt the paragraph
-			if (($token->type === Token::NEWLINE) && $this->mainParser->canInterrupt($tokens)) {
+			if (($token->type === Token::NEWLINE) && ($this->mainParser->canInterrupt($tokens))) {
 				break;
 			}
+			
+			// Read tokens
+			$my_tokens[] = $token;
 		}
 		
-		// Remove trailing linebreak
-		if (count($my_tokens) && ($my_tokens[\count($my_tokens)-1]->type === Token::NEWLINE)) {
+		// Trim
+		while (\count($my_tokens) && \in_array($my_tokens[0]->type, [Token::WHITESPACE, Token::NEWLINE])) {
+			\array_shift($my_tokens);
+		}
+		
+		while (\count($my_tokens) && \in_array($my_tokens[\count($my_tokens)-1]->type, [Token::WHITESPACE, Token::NEWLINE])) {
 			\array_pop($my_tokens);
 		}
 		
