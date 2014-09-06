@@ -28,7 +28,6 @@ namespace nexxes\stmd\parser;
 
 use \nexxes\stmd\token\Token;
 use nexxes\stmd\structure\Block;
-use nexxes\stmd\structure\Document;
 use nexxes\stmd\structure\Type;
 
 /**
@@ -75,7 +74,6 @@ class FencedCodeParser implements ParserInterface {
 	 * {@inheritdocs}
 	 */
 	public function canParse(Block $context, array $tokens) {
-		echo "Calling canParse, tokens: " . \count($tokens) . "\n";
 		$pos = 0;
 		
 		// Check indentation
@@ -108,12 +106,8 @@ class FencedCodeParser implements ParserInterface {
 		
 		// Find a closing line
 		while (false !== ($endl = $this->mainParser->nextToken($tokens, Token::NEWLINE, $pos+1))) {
-			echo "Checking newline for closing delimiter (pos: $endl) ...\n";
-			
 			if (false !== ($add = $this->isClosing($tokens, $endl, $this->fence))) {
 				$this->tokens = $endl + $add;
-				
-				echo "READING tokens: " . $this->tokens . "\n";
 				return true;
 			} else {
 				$pos = $endl;
@@ -122,7 +116,6 @@ class FencedCodeParser implements ParserInterface {
 		
 		// We can parse up to the end of the block
 		$this->tokens = \count($tokens);
-		echo "READING tokens: " . $this->tokens . "\n";
 		return true;
 	}
 
@@ -191,13 +184,11 @@ class FencedCodeParser implements ParserInterface {
 		
 		// Allow to start at a newline
 		if ($tokens[$pos]->type === Token::NEWLINE) {
-			echo "Found a newline\n";
 			$count++;
 		}
 		
 		// Indentation of end marker
 		if ($this->mainParser->isIndentation($tokens, $pos+$count)) {
-			echo "Found indentation\n";
 			$count++;
 		}
 
@@ -206,10 +197,8 @@ class FencedCodeParser implements ParserInterface {
 			return false;
 		}
 		
-		echo "Found delimiter\n";
 		// Verify size matches
 		if ($tokens[$pos+$count]->length >= $fence->length) {
-			echo " ... has correct size\n";
 			$count++;
 		} else {
 			return false;
@@ -217,19 +206,16 @@ class FencedCodeParser implements ParserInterface {
 
 		// Space before the line ending
 		if (isset($tokens[$pos+$count]) && ($tokens[$pos+$count]->type === Token::WHITESPACE)) {
-			echo "found whitespace\n";
 			$count++;
 		}
 
 		// Token list is empty
 		if (!isset($tokens[$pos+$count])) {
-			echo "Empty tokenlist\n";
 			return $count;
 		}
 		
 		// Found final newline
 		if ($tokens[$pos+$count]->type === Token::NEWLINE) {
-			echo "Found another newline\n";
 			return $count+1;
 		}
 		

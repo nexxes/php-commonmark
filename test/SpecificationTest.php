@@ -41,7 +41,7 @@ abstract class SpecificationTest extends \PHPUnit_Framework_TestCase {
 	}
 	
 	public function runExample($exampleNo) {
-		echo "Running Example #$exampleNo:\n";
+		//echo "Running Example #$exampleNo:\n";
 		
 		$example = $this->exampleReader->getExample($exampleNo);
 		
