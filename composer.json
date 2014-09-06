@@ -13,5 +13,8 @@
 		"psr-4": {
 			"nexxes\\cm\\": "src/"
 		}
-	}
+	},
+	
+	"homepage": "http://getbootstrap.com",
+	"license": "MIT"
 }
