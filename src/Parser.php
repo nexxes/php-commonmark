@@ -53,6 +53,7 @@ class Parser {
 	private $block_prio = [
 		Structs::CONTAINER_BLOCKQUOTE,
 		Structs::LEAF_HR,
+		Structs::LEAF_ATX,
 		Structs::LEAF_PARAGRAPH,
 	];
 	
@@ -70,6 +71,7 @@ class Parser {
 
 		$this->useParser(new parser\BlockquoteParser($this));
 		$this->useParser(new parser\HorizontalRuleParser($this));
+		$this->useParser(new parser\ATXHeaderParser($this));
 		$this->useParser(new parser\ParagraphParser($this));
 	}
 	
@@ -297,5 +299,23 @@ class Parser {
 		}
 		
 		return $this->parsers[$type]->parse($parent, $tokens);
+	}
+	
+	/**
+	 * Remove newlines and spaces from the beginning and the end of the string
+	 * @param array $tokens
+	 */
+	public function trim(array $tokens) {
+		// Trim left
+		while (\count($tokens) && \in_array($tokens[0]->type, [Token::WHITESPACE, Token::NEWLINE])) {
+			\array_shift($tokens);
+		}
+		
+		// Trim right
+		while (\count($tokens) && \in_array($tokens[\count($tokens)-1]->type, [Token::WHITESPACE, Token::NEWLINE])) {
+			\array_pop($tokens);
+		}
+		
+		return $tokens;
 	}
 }

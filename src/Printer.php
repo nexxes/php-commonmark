@@ -55,6 +55,8 @@ class Printer {
 				return $this->printBlockquote($elem);
 			case Type::LEAF_HR:
 				return $this->printHorizontalRule($elem);
+			case Type::LEAF_ATX:
+				return $this->printATXHeaders($elem);
 			case Type::LEAF_PARAGRAPH:
 				return $this->printParagraph($elem);
 			
@@ -69,6 +71,10 @@ class Printer {
 	
 	protected function printHorizontalRule(Block $elem) {
 		return '<hr />';
+	}
+	
+	protected function printATXHeaders(Block $elem) {
+		return '<h' . $elem->meta['level'] . '>' . $elem->inline . '</h' . $elem->meta['level'] . '>';
 	}
 	
 	protected function printParagraph(Block $paragraph) {

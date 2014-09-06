@@ -63,6 +63,19 @@ class Block implements StructureInterface, \ArrayAccess, \IteratorAggregate, \Co
 	 */
 	protected $type;
 	
+	/**
+	 * The inline data of this element.
+	 * Can be a raw string or an object structure which can be casted to a string.
+	 * @var type 
+	 */
+	public $inline = '';
+	
+	/**
+	 * Storage for custom block information such as the header level, etc.
+	 * @var array
+	 */
+	public $meta = [];
+	
 	
 	
 	
