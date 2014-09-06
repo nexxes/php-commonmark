@@ -52,8 +52,9 @@ class Parser {
 	 */
 	private $block_prio = [
 		Structs::CONTAINER_BLOCKQUOTE,
-		Structs::LEAF_HR,
 		Structs::LEAF_ATX,
+		Structs::LEAF_SETEXT,
+		Structs::LEAF_HR,
 		Structs::LEAF_PARAGRAPH,
 	];
 	
@@ -72,6 +73,7 @@ class Parser {
 		$this->useParser(new parser\BlockquoteParser($this));
 		$this->useParser(new parser\HorizontalRuleParser($this));
 		$this->useParser(new parser\ATXHeaderParser($this));
+		$this->useParser(new parser\SetextHeaderParser($this));
 		$this->useParser(new parser\ParagraphParser($this));
 	}
 	
@@ -307,7 +309,7 @@ class Parser {
 	 */
 	public function trim(array $tokens) {
 		// Trim left
-		while (\count($tokens) && \in_array($tokens[0]->type, [Token::WHITESPACE, Token::NEWLINE])) {
+		while (\count($tokens) && \in_array($tokens[0]->type, [Token::WHITESPACE, Token::NEWLINE, Token::BLANKLINE, ])) {
 			\array_shift($tokens);
 		}
 		

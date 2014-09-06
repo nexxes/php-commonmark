@@ -56,6 +56,7 @@ class Printer {
 			case Type::LEAF_HR:
 				return $this->printHorizontalRule($elem);
 			case Type::LEAF_ATX:
+			case Type::LEAF_SETEXT:
 				return $this->printATXHeaders($elem);
 			case Type::LEAF_PARAGRAPH:
 				return $this->printParagraph($elem);
