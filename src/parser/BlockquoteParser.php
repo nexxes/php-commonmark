@@ -88,6 +88,7 @@ class BlockquoteParser implements ParserInterface {
 			
 			// Blank line always terminates blockquote
 			if ($tokens[0]->type === Token::BLANKLINE) {
+				\array_shift($tokens);
 				break;
 			}
 			
@@ -134,11 +135,6 @@ class BlockquoteParser implements ParserInterface {
 		$parent[] = $blockquote = new Block(Type::CONTAINER_BLOCKQUOTE, $parent, $my_tokens);
 		while (\count($my_tokens)) {
 			$my_tokens = $this->mainParser->parseBlock($blockquote, $my_tokens);
-		}
-		
-		// Blockquote may have been followed by a blankline:
-		if (count($tokens) && ($tokens[0]->type === Token::BLANKLINE)) {
-			$parent[] = new Block(Type::INLINE_SOFT_BREAK, $parent, [\array_shift($tokens)]);
 		}
 		
 		return $tokens;
