@@ -61,6 +61,8 @@ class Printer {
 			case Type::LEAF_INDENTED_CODE:
 			case Type::LEAF_FENCED_CODE:
 				return $this->printCode($elem);
+			case Type::LEAF_HTML:
+				return $this->printHTML($elem);
 			case Type::LEAF_PARAGRAPH:
 				return $this->printParagraph($elem);
 			
@@ -87,6 +89,10 @@ class Printer {
 			. \htmlspecialchars($elem->inline)
 			. (\strlen($elem->inline) ? PHP_EOL : '')
 			. '</code></pre>';
+	}
+	
+	protected function printHTML(Block $elem) {
+		return $elem->inline;
 	}
 	
 	protected function printParagraph(Block $paragraph) {

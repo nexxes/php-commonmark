@@ -146,6 +146,9 @@ class Tokenizer {
 			// Tokenizer methods that read a single char
 			'tokenizeBackslash',
 			'tokenizeColon',
+			'tokenizeSlash',
+			'tokenizeBang',
+			'tokenizeQuestionMark',
 			'tokenizeSingleQuote',
 			'tokenizeDoubleQuote',
 			'tokenizeLeftSquareBracket',
@@ -223,6 +226,14 @@ class Tokenizer {
 	
 	private function tokenizeColon() {
 		return $this->tokenizeChar(':', Token::COLON);
+	}
+	
+	private function tokenizeBang() {
+		return $this->tokenizeChar('!', Token::BANG);
+	}
+	
+	private function tokenizeQuestionMark() {
+		return $this->tokenizeChar('?', Token::QUESTION);
 	}
 	
 	private function tokenizeSlash() {

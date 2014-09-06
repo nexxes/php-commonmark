@@ -64,6 +64,7 @@ class Parser {
 		Structs::LEAF_SETEXT,
 		Structs::LEAF_INDENTED_CODE,
 		Structs::LEAF_FENCED_CODE,
+		Structs::LEAF_HTML,
 		Structs::LEAF_PARAGRAPH,
 	];
 	
@@ -85,6 +86,7 @@ class Parser {
 		$this->useParser(new parser\SetextHeaderParser($this));
 		$this->useParser(new parser\IndentedCodeParser($this));
 		$this->useParser(new parser\FencedCodeParser($this));
+		$this->useParser(new parser\HTMLBlockParser($this));
 		$this->useParser(new parser\ParagraphParser($this));
 	}
 	

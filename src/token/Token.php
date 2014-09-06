@@ -50,6 +50,8 @@ class Token {
 	const COLON = 109;
 	const SLASH = 110;
 	const BACKSLASH = 111;
+	const BANG = 112;
+	const QUESTION = 113;
 	
 	const PARENTHESIS_LEFT = 200;
 	const PARENTHESIS_RIGHT = 201;
