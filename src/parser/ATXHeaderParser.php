@@ -60,8 +60,6 @@ class ATXHeaderParser implements ParserInterface {
 	 * {@inheritdoc}
 	 */
 	public function canParse(array $tokens) {
-		print_r($tokens);
-		
 		// Find a hash in one of the first two tokens
 		if (false === ($pos = $this->mainParser->nextToken($tokens, Token::HASH, 0, 2))) {
 			return false;
