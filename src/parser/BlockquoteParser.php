@@ -118,7 +118,7 @@ class BlockquoteParser implements ParserInterface {
 					$whitespace->pos++;
 					$whitespace->length--;
 					$whitespace->raw = \strstr($whitespace->raw, 1);
-					$my_tokens = $marker;
+					$my_tokens[] = $marker;
 				}
 			}
 			
