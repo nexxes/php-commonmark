@@ -24,12 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd;
+namespace nexxes\cm;
 
-use \nexxes\stmd\struct\Container;
-use \nexxes\stmd\struct\InlineCode;
-use \nexxes\stmd\struct\Literal;
-use \nexxes\stmd\token\Token;
+use \nexxes\cm\struct\Container;
+use \nexxes\cm\struct\InlineCode;
+use \nexxes\cm\struct\Literal;
+use \nexxes\cm\token\Token;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>

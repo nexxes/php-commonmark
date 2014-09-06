@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\parser;
+namespace nexxes\cm\parser;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class HorizontalRuleParserTest extends \nexxes\stmd\SpecificationTest {
+class HorizontalRuleParserTest extends \nexxes\cm\SpecificationTest {
 	/**
 	 * @test
-	 * @covers \nexxes\stmd\parser\HorizontalRuleParser
+	 * @covers \nexxes\cm\parser\HorizontalRuleParser
 	 */
 	public function testHorizontalRuleParser() {
 		for ($test=4; $test <= 22; ++$test) {

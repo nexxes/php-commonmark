@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\structure;
+namespace nexxes\cm\structure;
 
 /**
  * 
@@ -36,19 +36,19 @@ namespace nexxes\stmd\structure;
 interface StructureInterface {
 	/**
 	 * Get the element containing this structure
-	 * @return \nexxes\stmd\structure\StructureInterface
+	 * @return \nexxes\cm\structure\StructureInterface
 	 */
 	function getParent();
 	
 	/**
 	 * Get the root element
-	 * @return \nexxes\stmd\structure\Document
+	 * @return \nexxes\cm\structure\Document
 	 */
 	function getRoot();
 	
 	/**
 	 * Get the list of tokens this element is composed of
-	 * @return array<\nexxes\stmd\token\token>
+	 * @return array<\nexxes\cm\token\token>
 	 */
 	function getTokens();
 	
@@ -56,7 +56,7 @@ interface StructureInterface {
 	 * Get the block type of this structure.
 	 * One of the constants in Type
 	 * @return string
-	 * @see \nexxes\stmd\structure\Type
+	 * @see \nexxes\cm\structure\Type
 	 */
 	function getType();
 }

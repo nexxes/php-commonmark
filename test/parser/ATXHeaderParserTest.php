@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\parser;
+namespace nexxes\cm\parser;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class ATXHeaderParserTest extends \nexxes\stmd\SpecificationTest {
+class ATXHeaderParserTest extends \nexxes\cm\SpecificationTest {
 	/**
 	 * @test
-	 * @covers \nexxes\stmd\parser\ATXHeaderParser
+	 * @covers \nexxes\cm\parser\ATXHeaderParser
 	 */
 	public function testATXHeaderParser() {
 		for ($test=23; $test <= 39; ++$test) {

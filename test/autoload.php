@@ -6,4 +6,4 @@ if (is_dir(__DIR__ . '/../vendor')) {
 	$autoloader = require_once(__DIR__ . '/../../../vendor/autoload.php');
 }
 
-$autoloader->addPsr4('nexxes\\stmd\\', __DIR__);
+$autoloader->addPsr4('nexxes\\cm\\', __DIR__);

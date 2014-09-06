@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\parser;
+namespace nexxes\cm\parser;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class HTMLBlockParserTest extends \nexxes\stmd\SpecificationTest {
+class HTMLBlockParserTest extends \nexxes\cm\SpecificationTest {
 	/**
 	 * @test
-	 * @covers \nexxes\stmd\parser\HTMLBlockParser
+	 * @covers \nexxes\cm\parser\HTMLBlockParser
 	 */
 	public function testHTMLBlockParser() {
 		for ($test=87; $test <= 100; ++$test) {

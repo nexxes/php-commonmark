@@ -24,11 +24,11 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\parser;
+namespace nexxes\cm\parser;
 
-use \nexxes\stmd\token\Token;
-use nexxes\stmd\structure\Block;
-use nexxes\stmd\structure\Type;
+use \nexxes\cm\token\Token;
+use \nexxes\cm\structure\Block;
+use \nexxes\cm\structure\Type;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
@@ -38,13 +38,13 @@ class FencedCodeParser implements ParserInterface {
 	const TYPE = Type::LEAF_FENCED_CODE;
 	
 	/**
-	 * @var \nexxes\stmd\Parser
+	 * @var \nexxes\cm\Parser
 	 */
 	private $mainParser;
 	
 	/**
 	 * The fence token found in the last run
-	 * @var \nexxes\stmd\token\Token
+	 * @var \nexxes\cm\token\Token
 	 */
 	private $fence;
 	
@@ -174,9 +174,9 @@ class FencedCodeParser implements ParserInterface {
 	
 	/**
 	 * 
-	 * @param array<\nexxes\stmd\token\Token> $tokens
+	 * @param array<\nexxes\cm\token\Token> $tokens
 	 * @param type $pos
-	 * @param \nexxes\stmd\token\Token $fence
+	 * @param \nexxes\cm\token\Token $fence
 	 * @return boolean
 	 */
 	private function isClosing(array &$tokens, $pos, Token $fence) {

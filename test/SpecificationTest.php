@@ -24,10 +24,10 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd;
+namespace nexxes\cm;
 
-use \nexxes\stmd\structure\Document;
-use \nexxes\stmd\token\Tokenizer;
+use \nexxes\cm\structure\Document;
+use \nexxes\cm\token\Tokenizer;
 
 /**
  * Base for tests that use examples from the specification
@@ -37,7 +37,7 @@ abstract class SpecificationTest extends \PHPUnit_Framework_TestCase {
 	private $exampleReader;
 	
 	public function setUp() {
-		$this->exampleReader = new \nexxes\stmd\TestReader(__DIR__ . '/../spec/spec.txt');
+		$this->exampleReader = new \nexxes\cm\TestReader(__DIR__ . '/../spec/spec.txt');
 	}
 	
 	public function runExample($exampleNo) {

@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd;
+namespace nexxes\cm;
 
-use nexxes\stmd\token\Token;
+use nexxes\cm\token\Token;
 
 /**
  * Description of ParagraphParser

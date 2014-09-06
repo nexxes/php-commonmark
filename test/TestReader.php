@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd;
+namespace nexxes\cm;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>

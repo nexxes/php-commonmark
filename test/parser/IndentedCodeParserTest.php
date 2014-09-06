@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\parser;
+namespace nexxes\cm\parser;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class IndentedCodeParserTest extends \nexxes\stmd\SpecificationTest {
+class IndentedCodeParserTest extends \nexxes\cm\SpecificationTest {
 	/**
 	 * @test
-	 * @covers \nexxes\stmd\parser\IndentedCodeParser
+	 * @covers \nexxes\cm\parser\IndentedCodeParser
 	 */
 	public function testIndentedCodeParser() {
 		for ($test=54; $test <= 63; ++$test) {

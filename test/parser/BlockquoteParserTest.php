@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\parser;
+namespace nexxes\cm\parser;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class BlockquoteParserTest extends \nexxes\stmd\SpecificationTest {
+class BlockquoteParserTest extends \nexxes\cm\SpecificationTest {
 	/**
 	 * @test
-	 * @covers \nexxes\stmd\parser\BlockquoteParser
+	 * @covers \nexxes\cm\parser\BlockquoteParser
 	 */
 	public function testBlockquoteParser() {
 		for ($test=128; $test <= 151; ++$test) {

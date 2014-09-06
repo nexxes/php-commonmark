@@ -9,6 +9,6 @@ while (!\feof(STDIN)) {
   $md .= \fread(STDIN, 4096);
 }
 
-$parser = new \nexxes\stmd\Parser();
+$parser = new \nexxes\cm\Parser();
 echo $parser->parseString($md);
 echo PHP_EOL;

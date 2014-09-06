@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\struct;
+namespace nexxes\cm\struct;
 
 /**
  * Represents a Horizontal Rule

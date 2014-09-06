@@ -24,12 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd;
+namespace nexxes\cm;
 
-use \nexxes\stmd\structure\Block;
-use \nexxes\stmd\structure\Document;
-use \nexxes\stmd\structure\StructureInterface;
-use \nexxes\stmd\structure\Type;
+use \nexxes\cm\structure\Block;
+use \nexxes\cm\structure\Document;
+use \nexxes\cm\structure\StructureInterface;
+use \nexxes\cm\structure\Type;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
@@ -37,7 +37,7 @@ use \nexxes\stmd\structure\Type;
 class Printer {
 	/**
 	 * The document to print
-	 * @var \nexxes\stmd\structure\Document
+	 * @var \nexxes\cm\structure\Document
 	 */
 	private $doc;
 	

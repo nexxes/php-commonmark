@@ -1,6 +1,6 @@
 {
-	"name": "nexxes/StandardMarkdown",
-	"description": "PHP Parser for Standard Markdown",
+	"name": "nexxes/CommonMark",
+	"description": "PHP Parser for Common Mark",
 	
 	"authors": [
 		{
@@ -11,7 +11,7 @@
 	
 	"autoload": {
 		"psr-4": {
-			"nexxes\\stmd\\": "src/"
+			"nexxes\\cm\\": "src/"
 		}
 	}
 }

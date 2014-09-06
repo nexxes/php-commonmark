@@ -24,11 +24,11 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\token;
+namespace nexxes\cm\token;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
- * @coversDefaultClass \nexxes\stmd\token\Tokenizer
+ * @coversDefaultClass \nexxes\cm\token\Tokenizer
  */
 class TokenizerTest extends \PHPUnit_Framework_TestCase {
 	/**

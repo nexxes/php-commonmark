@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\parser;
+namespace nexxes\cm\parser;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class SetextHeaderParserTest extends \nexxes\stmd\SpecificationTest {
+class SetextHeaderParserTest extends \nexxes\cm\SpecificationTest {
 	/**
 	 * @test
-	 * @covers \nexxes\stmd\parser\SetextHeaderParser
+	 * @covers \nexxes\cm\parser\SetextHeaderParser
 	 */
 	public function testSetextHeaderParser() {
 		for ($test=40; $test <= 53; ++$test) {

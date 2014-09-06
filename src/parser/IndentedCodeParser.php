@@ -24,11 +24,11 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\parser;
+namespace nexxes\cm\parser;
 
-use \nexxes\stmd\token\Token;
-use nexxes\stmd\structure\Block;
-use nexxes\stmd\structure\Type;
+use \nexxes\cm\token\Token;
+use \nexxes\cm\structure\Block;
+use \nexxes\cm\structure\Type;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
@@ -38,7 +38,7 @@ class IndentedCodeParser implements ParserInterface {
 	const TYPE = Type::LEAF_INDENTED_CODE;
 	
 	/**
-	 * @var \nexxes\stmd\Parser
+	 * @var \nexxes\cm\Parser
 	 */
 	private $mainParser;
 	

@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\parser;
+namespace nexxes\cm\parser;
 
-use \nexxes\stmd\structure\Block;
+use \nexxes\cm\structure\Block;
 
 /**
  *
@@ -42,8 +42,8 @@ interface ParserInterface {
 	/**
 	 * Checks if this parser can interrupt a paragraph and can parse the next line of input
 	 * 
-	 * @param \nexxes\stmd\structure\Block $context
-	 * @param array<\nexxes\stmd\token\Token> $tokens
+	 * @param \nexxes\cm\structure\Block $context
+	 * @param array<\nexxes\cm\token\Token> $tokens
 	 * @return bool
 	 */
 	function canInterrupt(Block $context, array $tokens);
@@ -51,8 +51,8 @@ interface ParserInterface {
 	/**
 	 * Checks if this parser can parse the next line of input
 	 * 
-	 * @param \nexxes\stmd\structure\Block $context
-	 * @param array<\nexxes\stmd\token\Token> $tokens
+	 * @param \nexxes\cm\structure\Block $context
+	 * @param array<\nexxes\cm\token\Token> $tokens
 	 * @return bool
 	 */
 	function canParse(Block $context, array $tokens);
@@ -62,9 +62,9 @@ interface ParserInterface {
 	 * This representation is appended to $parent.
 	 * The remaining tokens are returned.
 	 * 
-	 * @param array<\nexxes\stmd\structure\Block> $parent
-	 * @param array<\nexxes\stmd\token\Token> $tokens
-	 * @return array<\nexxes\stmd\token\Token>
+	 * @param array<\nexxes\cm\structure\Block> $parent
+	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @return array<\nexxes\cm\token\Token>
 	 */
 	function parse(Block $parent, array $tokens);
 }

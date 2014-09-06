@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\token;
+namespace nexxes\cm\token;
 
 /**
  * A CharToken represents a token that consists only of a single char that may be repeated several times.

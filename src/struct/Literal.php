@@ -24,16 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\struct;
+namespace nexxes\cm\struct;
 
-use \nexxes\stmd\token\Token;
+use \nexxes\cm\token\Token;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
 class Literal {
 	/**
-	 * @var \nexxes\stmd\token\Token
+	 * @var \nexxes\cm\token\Token
 	 */
 	public $tokens;
 	

@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd\token;
+namespace nexxes\cm\token;
 
 /**
  * Description of Token
