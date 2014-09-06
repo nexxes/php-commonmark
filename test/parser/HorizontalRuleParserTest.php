@@ -39,7 +39,6 @@ class HorizontalRuleParserTest extends \nexxes\stmd\SpecificationTest {
 			if ($test == 9) { continue; } // Requires code block
 			if ($test == 17) { continue; } // Requires emphasis
 			if ($test == 18) { continue; } // Requires lists
-			if ($test == 20) { continue; } // Requires setext header
 			if ($test == 21) { continue; } // Requires lists
 			if ($test == 22) { continue; } // Requires lists
 			

@@ -52,9 +52,9 @@ class Parser {
 	 */
 	private $block_prio = [
 		Structs::CONTAINER_BLOCKQUOTE,
+		Structs::LEAF_HR,
 		Structs::LEAF_ATX,
 		Structs::LEAF_SETEXT,
-		Structs::LEAF_HR,
 		Structs::LEAF_PARAGRAPH,
 	];
 	
