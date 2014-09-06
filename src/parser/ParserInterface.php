@@ -42,18 +42,20 @@ interface ParserInterface {
 	/**
 	 * Checks if this parser can interrupt a paragraph and can parse the next line of input
 	 * 
+	 * @param \nexxes\stmd\structure\Block $context
 	 * @param array<\nexxes\stmd\token\Token> $tokens
 	 * @return bool
 	 */
-	function canInterrupt(array $tokens);
+	function canInterrupt(Block $context, array $tokens);
 	
 	/**
 	 * Checks if this parser can parse the next line of input
 	 * 
+	 * @param \nexxes\stmd\structure\Block $context
 	 * @param array<\nexxes\stmd\token\Token> $tokens
 	 * @return bool
 	 */
-	function canParse(array $tokens);
+	function canParse(Block $context, array $tokens);
 	
 	/**
 	 * Parse from the supplied token stream and create a new structure representation.

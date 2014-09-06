@@ -52,14 +52,14 @@ class ATXHeaderParser implements ParserInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function canInterrupt(array $tokens) {
-		return $this->canParse($tokens);
+	public function canInterrupt(Block $context, array $tokens) {
+		return $this->canParse($context, $tokens);
 	}
 	
 	/**
 	 * {@inheritdoc}
 	 */
-	public function canParse(array $tokens) {
+	public function canParse(Block $context, array $tokens) {
 		// Find a hash in one of the first two tokens
 		if (false === ($pos = $this->mainParser->nextToken($tokens, Token::HASH, 0, 2))) {
 			return false;

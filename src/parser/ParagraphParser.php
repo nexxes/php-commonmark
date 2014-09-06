@@ -52,14 +52,14 @@ class ParagraphParser implements ParserInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function canInterrupt(array $tokens) {
+	public function canInterrupt(Block $context, array $tokens) {
 		return false;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function canParse(array $tokens) {
+	public function canParse(Block $context, array $tokens) {
 		return true;
 	}
 
@@ -72,7 +72,7 @@ class ParagraphParser implements ParserInterface {
 		while (null !== ($token = \array_shift($tokens))) {
 			if ($token->type === Token::NEWLINE) {
 				// Last token was newline, so check if someone wants to interrupt the paragraph
-				if ($this->mainParser->canInterrupt($tokens)) {
+				if ($this->mainParser->canInterrupt($parent, $tokens)) {
 					break;
 				}
 				

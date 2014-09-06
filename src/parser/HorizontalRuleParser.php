@@ -52,14 +52,14 @@ class HorizontalRuleParser implements ParserInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function canInterrupt(array $tokens) {
-		return $this->canParse($tokens);
+	public function canInterrupt(Block $context, array $tokens) {
+		return $this->canParse($context, $tokens);
 	}
 	
 	/**
 	 * {@inheritdoc}
 	 */
-	public function canParse(array $tokens) {
+	public function canParse(Block $context, array $tokens) {
 		// First char must be whitespace (with a maximum of 3 spaces) or one of the line chars)
 		if ($tokens[0]->type === Token::WHITESPACE) {
 			if ($tokens[0]->length > 3) {

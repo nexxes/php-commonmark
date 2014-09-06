@@ -52,14 +52,14 @@ class SetextHeaderParser implements ParserInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function canInterrupt(array $tokens) {
+	public function canInterrupt(Block $context, array $tokens) {
 		return false;
 	}
 	
 	/**
 	 * {@inheritdocs}
 	 */
-	public function canParse(array $tokens) {
+	public function canParse(Block $context, array $tokens) {
 		// Exceeds allowed indentation
 		if (($tokens[0]->type === Token::WHITESPACE) && ($tokens[0]->length > 3)) {
 			return false;

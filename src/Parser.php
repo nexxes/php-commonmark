@@ -184,17 +184,19 @@ class Parser {
 	
 	/**
 	 * Check if someone wants to interrupt a paragraph
+	 * 
+	 * @param \nexxes\stmd\structure\Block $context
 	 * @param array<\nexxes\stmd\token\Token> $tokens
 	 * @return boolean
 	 */
-	public function canInterrupt(array &$tokens) {
+	public function canInterrupt(Block $context, array &$tokens) {
 		if (!\count($tokens)) {
 			return false;
 		}
 		
 		// Try to parse blocks according to priority array
 		foreach ($this->block_prio AS $blockType) {
-			if ($this->parsers[$blockType]->canInterrupt($tokens)) {
+			if ($this->parsers[$blockType]->canInterrupt($context, $tokens)) {
 				return $blockType;
 			}
 		}
@@ -207,16 +209,18 @@ class Parser {
 	 * Returns the block type that can be parsed from this data.
 	 * If no type is returned, parse as Paragraph.
 	 * 
+	 * @param \nexxes\stmd\structure\Block $context
+	 * @param array<\nexxes\stmd\token\Token> $tokens
 	 * @return string
 	 */
-	public function canParseBlock(array &$tokens) {
+	public function canParseBlock(Block $context, array &$tokens) {
 		if (!\count($tokens)) {
 			return false;
 		}
 		
 		// Try to parse blocks according to priority array
 		foreach ($this->block_prio AS $blockType) {
-			if ($this->parsers[$blockType]->canParse($tokens)) {
+			if ($this->parsers[$blockType]->canParse($context, $tokens)) {
 				return $blockType;
 			}
 		}
@@ -229,21 +233,21 @@ class Parser {
 	 * Execute the parser of type $type. If $type is empty, find the matching parser.
 	 * Returns the remaining tokens
 	 * 
-	 * @param \nexxes\stmd\structure\Block $parent
+	 * @param \nexxes\stmd\structure\Block $context
 	 * @param array<\nexxes\stmd\token\Token> $tokens
 	 * @param string $type
 	 * @return array<\nexxes\stmd\token\Token>
 	 */
-	public function parseBlock(Block $parent, array $tokens, $type = null) {
+	public function parseBlock(Block $context, array $tokens, $type = null) {
 		if ($type === null) {
-			$type = $this->canParseBlock($tokens);
+			$type = $this->canParseBlock($context, $tokens);
 		}
 		
 		if ($type === false) {
 			return $tokens;
 		}
 		
-		return $this->parsers[$type]->parse($parent, $tokens);
+		return $this->parsers[$type]->parse($context, $tokens);
 	}
 	
 	/**

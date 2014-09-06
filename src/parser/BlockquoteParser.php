@@ -52,14 +52,14 @@ class BlockquoteParser implements ParserInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function canInterrupt(array $tokens) {
-		return $this->canParse($tokens);
+	public function canInterrupt(Block $context, array $tokens) {
+		return $this->canParse($context, $tokens);
 	}
 	
 	/**
 	 * {@inheritdoc}
 	 */
-	public function canParse(array $tokens) {
+	public function canParse(Block $context, array $tokens) {
 		// Try to find a starting delimiter
 		if (false === ($quote = $this->mainParser->nextToken($tokens, Token::ANGLE_BRACKET_RIGHT, 0, 2))) {
 			return false;

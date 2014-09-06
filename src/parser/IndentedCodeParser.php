@@ -52,14 +52,14 @@ class IndentedCodeParser implements ParserInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function canInterrupt(array $tokens) {
+	public function canInterrupt(Block $context, array $tokens) {
 		return false;
 	}
 	
 	/**
 	 * {@inheritdocs}
 	 */
-	public function canParse(array $tokens) {
+	public function canParse(Block $context, array $tokens) {
 		$pos = 0;
 		while (false !== ($skip = $this->mainParser->isBlankLine($tokens, $pos))) {
 			$pos += $skip;
