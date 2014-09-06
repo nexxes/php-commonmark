@@ -60,6 +60,11 @@ class SetextHeaderParser implements ParserInterface {
 	 * {@inheritdocs}
 	 */
 	public function canParse(array $tokens) {
+		// Exceeds allowed indentation
+		if (($tokens[0]->type === Token::WHITESPACE) && ($tokens[0]->length > 3)) {
+			return false;
+		}
+		
 		// The first newline
 		if (false === ($pos = $this->mainParser->nextToken($tokens, Token::NEWLINE))) {
 			return false;
@@ -110,8 +115,15 @@ class SetextHeaderParser implements ParserInterface {
 		
 		// Copy up until second newline
 		if (false !== ($newline2 = $this->mainParser->nextToken($tokens, Token::NEWLINE, $newline1+1))) {
-			$my_tokens = \array_slice($tokens, 0, $newline2+1);
-			$tokens = \array_slice($tokens, $newline2+1);
+			$newline2++;
+			
+			// Eat blank lines
+			while (false !== ($shift = $this->mainParser->isBlankLine($tokens, $newline2))) {
+				$newline2 += $shift;
+			}
+			
+			$my_tokens = \array_slice($tokens, 0, $newline2);
+			$tokens = \array_slice($tokens, $newline2);
 		} 
 		
 		// Copy all data, no second newline present

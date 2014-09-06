@@ -70,14 +70,14 @@ class ParagraphParser implements ParserInterface {
 		$my_tokens = [];
 		
 		while (null !== ($token = \array_shift($tokens))) {
-			// Blankline terminates paragraph
-			if ($token->type === Token::BLANKLINE) {
-				break;
-			}
-			
 			if ($token->type === Token::NEWLINE) {
 				// Last token was newline, so check if someone wants to interrupt the paragraph
 				if ($this->mainParser->canInterrupt($tokens)) {
+					break;
+				}
+				
+				// Check if a blank line follows
+				if ($this->mainParser->isBlankLine($tokens)) {
 					break;
 				}
 				

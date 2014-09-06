@@ -29,25 +29,15 @@ namespace nexxes\stmd\parser;
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class BlockquoteParserTest extends \nexxes\stmd\SpecificationTest {
+class IndentedCodeParserTest extends \nexxes\stmd\SpecificationTest {
 	/**
 	 * @test
-	 * @covers \nexxes\stmd\parser\BlockquoteParser
+	 * @covers \nexxes\stmd\parser\IndentedCodeParser
 	 */
-	public function testBlockquoteParser() {
-		for ($test=128; $test <= 151; ++$test) {
-			if ($test == 132) { continue; } // Blockquote continuation / LAZYNESS
-			if ($test == 133) { continue; } // Blockquote continuation / LAZYNESS
-			if ($test == 135) { continue; } // Requires lists
-			if ($test == 137) { continue; } // Requires inline code
-			if ($test == 139) { continue; } // Blockquote blank lines
-			if ($test == 140) { continue; } // Blockquote blank lines
-			if ($test == 143) { continue; } // Empty lines in paragraphs
-			if ($test == 146) { continue; } // Blockquote continuation / LAZYNESS
-			if ($test == 147) { continue; } // Blockquote continuation / LAZYNESS
-			if ($test == 148) { continue; } // Blockquote continuation / LAZYNESS
-			if ($test == 149) { continue; } // Blockquote continuation / LAZYNESS
-			if ($test == 150) { continue; } // Blockquote continuation / LAZYNESS
+	public function testIndentedCodeParser() {
+		for ($test=54; $test <= 63; ++$test) {
+			if ($test == 27) { continue; } // Requires emphasis
+			if ($test == 30) { continue; } // Requires code block
 			
 			$this->runExample($test);
 		}

@@ -55,6 +55,7 @@ class Parser {
 		Structs::LEAF_HR,
 		Structs::LEAF_ATX,
 		Structs::LEAF_SETEXT,
+		Structs::LEAF_INDENTED_CODE,
 		Structs::LEAF_PARAGRAPH,
 	];
 	
@@ -74,6 +75,7 @@ class Parser {
 		$this->useParser(new parser\HorizontalRuleParser($this));
 		$this->useParser(new parser\ATXHeaderParser($this));
 		$this->useParser(new parser\SetextHeaderParser($this));
+		$this->useParser(new parser\IndentedCodeParser($this));
 		$this->useParser(new parser\ParagraphParser($this));
 	}
 	
@@ -319,5 +321,27 @@ class Parser {
 		}
 		
 		return $tokens;
+	}
+	
+	/**
+	 * Returns if the current line is a blank line.
+	 * Asumes that current position is at the beginning of a line.
+	 * Returns the number of tokens in this line (1 or 2) or false if not a blank line
+	 * 
+	 * @param array<\nexxes\stmd\token\Token> $tokens
+	 * @param int $pos
+	 * @return int|boolean
+	 */
+	public function isBlankLine(array $tokens, $pos = 0) {
+		// Next char is a newline
+		if (!isset($tokens[$pos])) { return false; }
+		if ($tokens[$pos]->type === Token::NEWLINE) { return 1; }
+		
+		// Next char is whitespace followed by newline
+		if (!isset($tokens[$pos+1])) { return false; }
+		if ($tokens[$pos]->type !== Token::WHITESPACE) { return false; }
+		if ($tokens[$pos+1]->type === Token::NEWLINE) { return 2; }
+		
+		return false;
 	}
 }

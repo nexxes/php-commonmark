@@ -107,9 +107,9 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		
 		$this->assertCount(4, $tokens);
 		$this->assertEquals(Token::NEWLINE, $tokens[0]->type);
-		$this->assertEquals(Token::BLANKLINE, $tokens[1]->type);
-		$this->assertEquals(Token::BLANKLINE, $tokens[2]->type);
-		$this->assertEquals(Token::BLANKLINE, $tokens[3]->type);
+		$this->assertEquals(Token::NEWLINE, $tokens[1]->type);
+		$this->assertEquals(Token::NEWLINE, $tokens[2]->type);
+		$this->assertEquals(Token::NEWLINE, $tokens[3]->type);
 	}
 	
 	/**
@@ -130,8 +130,8 @@ class TokenizerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(Token::SINGLE_QUOTE, $tokens[4]->type);
 		$this->assertEquals(Token::DOUBLE_QUOTE, $tokens[5]->type);
 		$this->assertEquals(Token::NEWLINE, $tokens[6]->type);
-		$this->assertEquals(Token::BLANKLINE, $tokens[7]->type);
-		$this->assertEquals(Token::BLANKLINE, $tokens[8]->type);
+		$this->assertEquals(Token::NEWLINE, $tokens[7]->type);
+		$this->assertEquals(Token::NEWLINE, $tokens[8]->type);
 		$this->assertEquals(Token::DOUBLE_QUOTE, $tokens[9]->type);
 		$this->assertEquals(Token::SINGLE_QUOTE, $tokens[10]->type);
 		$this->assertEquals(Token::ANGLE_BRACKET_RIGHT, $tokens[11]->type);

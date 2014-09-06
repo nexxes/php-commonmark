@@ -57,7 +57,9 @@ class Printer {
 				return $this->printHorizontalRule($elem);
 			case Type::LEAF_ATX:
 			case Type::LEAF_SETEXT:
-				return $this->printATXHeaders($elem);
+				return $this->printHeaders($elem);
+			case Type::LEAF_INDENTED_CODE:
+				return $this->printCode($elem);
 			case Type::LEAF_PARAGRAPH:
 				return $this->printParagraph($elem);
 			
@@ -74,8 +76,12 @@ class Printer {
 		return '<hr />';
 	}
 	
-	protected function printATXHeaders(Block $elem) {
+	protected function printHeaders(Block $elem) {
 		return '<h' . $elem->meta['level'] . '>' . $elem->inline . '</h' . $elem->meta['level'] . '>';
+	}
+	
+	protected function printCode(Block $elem) {
+		return '<pre><code>' . \htmlspecialchars($elem->inline) . PHP_EOL . '</code></pre>';
 	}
 	
 	protected function printParagraph(Block $paragraph) {

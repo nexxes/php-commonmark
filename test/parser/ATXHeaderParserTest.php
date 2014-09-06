@@ -37,7 +37,6 @@ class ATXHeaderParserTest extends \nexxes\stmd\SpecificationTest {
 	public function testATXHeaderParser() {
 		for ($test=23; $test <= 39; ++$test) {
 			if ($test == 27) { continue; } // Requires emphasis
-			if ($test == 30) { continue; } // Requires code block
 			
 			$this->runExample($test);
 		}

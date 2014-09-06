@@ -107,7 +107,7 @@ class Tokenizer {
 			}
 			
 			// Try to find blank lines
-			if (($token->type === Token::NEWLINE) || ($token->type === Token::BLANKLINE)) {
+			/*if (($token->type === Token::NEWLINE) || ($token->type === Token::BLANKLINE)) {
 				// If next token is also a newline, it is actually a blank line
 				if (isset($tokens[$i+1])
 					&& ($tokens[$i+1]->type === Token::NEWLINE)) {
@@ -124,7 +124,7 @@ class Tokenizer {
 				}
 				
 				continue;
-			}
+			}*/
 		}
 		
 		return \array_values($tokens);

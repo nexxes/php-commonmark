@@ -87,14 +87,18 @@ class BlockquoteParser implements ParserInterface {
 			}
 			
 			// Blank line always terminates blockquote
-			if ($tokens[0]->type === Token::BLANKLINE) {
-				\array_shift($tokens);
+			if (false !== ($shift = $this->mainParser->isBlankLine($tokens))) {
+				for ($i=0;$i<$shift; ++$i) { \array_shift($tokens); }
 				break;
 			}
 			
 			// Shift space of
-			if (($tokens[0]->type === Token::WHITESPACE) && ($tokens[0]->length <= 3)) {
-				\array_shift($tokens);
+			if ($tokens[0]->type === Token::WHITESPACE) {
+				if ($tokens[0]->length <= 3) {
+					\array_shift($tokens);
+				} else {
+					break;
+				}
 			}
 			
 			$marker = \array_shift($tokens);
@@ -118,7 +122,7 @@ class BlockquoteParser implements ParserInterface {
 					$whitespace->pos++;
 					$whitespace->length--;
 					$whitespace->raw = \strstr($whitespace->raw, 1);
-					$my_tokens[] = $marker;
+					$my_tokens[] = $whitespace;
 				}
 			}
 			
