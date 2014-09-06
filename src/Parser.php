@@ -344,4 +344,39 @@ class Parser {
 		
 		return false;
 	}
+	
+	/**
+	 * Remove leading and trailing blank lines
+	 * @param array<\nexxes\stmd\token\Token> $tokens
+	 * @return array<\nexxes\stmd\token\Token>
+	 */
+	public function killBlankLines(array $tokens) {
+		$found = 0;
+		
+		// Find leading blank lines
+		$start = 0;
+		while (false !== ($skip = $this->isBlankLine($tokens, $start))) {
+			$start += $skip;
+			$found++;
+		}
+		
+		// Find trailing blank lines
+		$end = \count($tokens)-1;
+		while (($start < $end) && ($tokens[$end]->type === Token::NEWLINE)) {
+			$fix = ($tokens[$end-1]->type === Token::WHITESPACE ? 1 : 0);
+			
+			if (isset($tokens[$end-(1+$fix)]) && ($tokens[$end-(1+$fix)]->type === Token::NEWLINE)) {
+				$end -= (1+$fix);
+				$found++;
+			} else {
+				break;
+			}
+		}
+		
+		if ($found) {
+			return \array_slice($tokens, $start, ($end+1) - $start);
+		} else {
+			return $tokens;
+		}
+	}
 }

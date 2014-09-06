@@ -36,9 +36,6 @@ class IndentedCodeParserTest extends \nexxes\stmd\SpecificationTest {
 	 */
 	public function testIndentedCodeParser() {
 		for ($test=54; $test <= 63; ++$test) {
-			if ($test == 27) { continue; } // Requires emphasis
-			if ($test == 30) { continue; } // Requires code block
-			
 			$this->runExample($test);
 		}
 	}

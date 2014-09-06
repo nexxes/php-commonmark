@@ -40,9 +40,6 @@ class BlockquoteParserTest extends \nexxes\stmd\SpecificationTest {
 			if ($test == 133) { continue; } // Blockquote continuation / LAZYNESS
 			if ($test == 135) { continue; } // Requires lists
 			if ($test == 137) { continue; } // Requires inline code
-			if ($test == 139) { continue; } // Blockquote blank lines
-			if ($test == 140) { continue; } // Blockquote blank lines
-			if ($test == 143) { continue; } // Empty lines in paragraphs
 			if ($test == 146) { continue; } // Blockquote continuation / LAZYNESS
 			if ($test == 147) { continue; } // Blockquote continuation / LAZYNESS
 			if ($test == 148) { continue; } // Blockquote continuation / LAZYNESS

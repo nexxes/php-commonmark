@@ -136,6 +136,9 @@ class BlockquoteParser implements ParserInterface {
 			}
 		}
 		
+		// Eat empty lines
+		$my_tokens = $this->mainParser->killBlankLines($my_tokens);
+		
 		$parent[] = $blockquote = new Block(Type::CONTAINER_BLOCKQUOTE, $parent, $my_tokens);
 		while (\count($my_tokens)) {
 			$my_tokens = $this->mainParser->parseBlock($blockquote, $my_tokens);

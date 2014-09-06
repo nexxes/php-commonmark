@@ -37,9 +37,7 @@ class SetextHeaderParserTest extends \nexxes\stmd\SpecificationTest {
 	public function testSetextHeaderParser() {
 		for ($test=40; $test <= 53; ++$test) {
 			if ($test == 40) { continue; } // Requires emphasis
-			if ($test == 43) { continue; } // Requires code block
 			if ($test == 49) { continue; } // HTML special chars quoting
-			if ($test == 51) { continue; } // Proper blank line handling
 			
 			$this->runExample($test);
 		}

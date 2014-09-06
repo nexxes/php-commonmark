@@ -101,25 +101,7 @@ class IndentedCodeParser implements ParserInterface {
 	}
 	
 	public function parseInline(Block $code) {
-		$tokens = $code->getTokens();
-		
-		// Find leading blank lines
-		$start = 0;
-		while (false !== ($skip = $this->mainParser->isBlankLine($tokens, $start))) { $start += $skip; }
-		
-		// Find trailing blank lines
-		$end = \count($tokens)-1;
-		while (($start < $end) && ($tokens[$end]->type === Token::NEWLINE)) {
-			$fix = ($tokens[$end-1]->type === Token::WHITESPACE ? 1 : 0);
-			
-			if (isset($tokens[$end-(1+$fix)]) && ($tokens[$end-(1+$fix)]->type === Token::NEWLINE)) {
-				$end -= (1+$fix);
-			} else {
-				break;
-			}
-		}
-		
-		$tokens = \array_slice($tokens, $start, ($end+1) - $start);
+		$tokens = $this->mainParser->killBlankLines($code->getTokens());
 				
 		if (\count($tokens) && ($tokens[\count($tokens)-1]->type === Token::NEWLINE)) {
 			\array_pop($tokens);
