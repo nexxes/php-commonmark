@@ -79,10 +79,25 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 * @covers \nexxes\stmd\parser\BlockquoteParser
 	 */
 	public function testBlockquoteParser() {
-		$this->runExample(138);
-		$this->runExample(141);
-		$this->runExample(144);
-		//$this->runExample(147);
+		for ($test=128; $test <= 151; ++$test) {
+			if ($test == 131) { continue; } // Requires code block
+			if ($test == 132) { continue; } // Blockquote continuation / LAZYNESS
+			if ($test == 133) { continue; } // Blockquote continuation / LAZYNESS
+			if ($test == 135) { continue; } // Requires lists
+			if ($test == 136) { continue; } // Requires code blocks
+			if ($test == 137) { continue; } // Requires inline code
+			if ($test == 139) { continue; } // Blockquote blank lines
+			if ($test == 140) { continue; } // Blockquote blank lines
+			if ($test == 143) { continue; } // Empty lines in paragraphs
+			if ($test == 146) { continue; } // Blockquote continuation / LAZYNESS
+			if ($test == 147) { continue; } // Blockquote continuation / LAZYNESS
+			if ($test == 148) { continue; } // Blockquote continuation / LAZYNESS
+			if ($test == 149) { continue; } // Blockquote continuation / LAZYNESS
+			if ($test == 150) { continue; } // Blockquote continuation / LAZYNESS
+			if ($test == 151) { continue; } // Requires code blocks
+			
+			$this->runExample($test);
+		}
 	}
 	
 	/**
@@ -90,6 +105,16 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 * @covers \nexxes\stmd\parser\HorizontalRuleParser
 	 */
 	public function testHorizontalRuleParser() {
-		$this->runExample(4);
+		for ($test=4; $test <= 22; ++$test) {
+			if ($test == 9) { continue; } // Requires code block
+			if ($test == 16) { continue; } // FIXME
+			if ($test == 17) { continue; } // Requires emphasis
+			if ($test == 18) { continue; } // Requires lists
+			if ($test == 20) { continue; } // Requires setext header
+			if ($test == 21) { continue; } // Requires lists
+			if ($test == 22) { continue; } // Requires lists
+			
+			$this->runExample($test);
+		}
 	}
 }
