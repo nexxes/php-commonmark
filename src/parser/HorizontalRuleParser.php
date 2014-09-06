@@ -24,17 +24,22 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd;
+namespace nexxes\stmd\parser;
 
-use \nexxes\stmd\token\CharToken;
 use \nexxes\stmd\token\Token;
+use nexxes\stmd\structure\Block;
+use nexxes\stmd\structure\Type;
 
 /**
- * HorizontalRuleParser
- *
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
+ * @link http://jgm.github.io/stmd/spec.html#horizontal-rules
  */
 class HorizontalRuleParser implements ParserInterface {
+	const TYPE = Type::LEAF_HR;
+	
+	/**
+	 * @var \nexxes\stmd\Parser
+	 */
 	private $mainParser;
 	
 	/**
@@ -47,34 +52,47 @@ class HorizontalRuleParser implements ParserInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function canParse(array &$tokens) {
-		if (!($tokens[0] instanceof CharToken)) {
-			return false;
-		}
-		
-		$type = $tokens[0]->type;
-		
-		if (($type !== Token::STAR) && ($type !== Token::MINUS) && ($type !== Token::UNDERSCORE)) {
-			return false;
-		}
-		
-		$counter = 0;
-		
-		for ($i=0; $i<\count($tokens); $i++) {
-			// Everything up to newline is ok, enough chars found?
-			if ($tokens[$i]->type === Token::NEWLINE) {
-				return ($counter >= 3);
-			}
-			
-			// Whitespace in between is ok
-			if ($tokens[$i]->type === Token::WHITESPACE) {
-				continue;
-			}
-			
-			// Found correct char
-			if ($tokens[$i]->type === $type) {
-				$counter += $tokens[$i]->length;
+	public function canInterrupt(array $tokens) {
+		return $this->canParse($tokens);
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function canParse(array $tokens) {
+		// First char must be whitespace (with a maximum of 3 spaces) or one of the line chars)
+		if ($tokens[0]->type === Token::WHITESPACE) {
+			if ($tokens[0]->length > 3) {
+				return false;
 			} else {
+				\array_shift($tokens);
+			}
+		}
+		
+		if (!isset($tokens[0]) || !\in_array($tokens[0]->type, [Token::MINUS, Token::STAR, Token::UNDERSCORE, ])) {
+			return false;
+		}
+		
+		while (null !== ($token = \array_shift($tokens))) {
+			if (!isset($usedChar)) {
+				$usedChar = $token->type;
+				$count = 0;
+			}
+			
+			if ($token->type === $usedChar) {
+				$count += $token->length;
+				
+				// Found enough marker
+				if ($count >= 3) {
+					return true;
+				}
+			}
+			
+			// Ignore whitespace
+			elseif ($token->type === Token::WHITESPACE) {
+			}
+			
+			else {
 				return false;
 			}
 		}
@@ -85,15 +103,20 @@ class HorizontalRuleParser implements ParserInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function parse(array &$tokens) {
-		// Remove everything up to newline
-		while ($tokens[0]->type !== Token::NEWLINE) {
-			\array_shift($tokens);
+	public function parse(Block $parent, array $tokens) {
+		$my_tokens = [];
+		
+		while (null !== ($token = \array_shift($tokens))) {
+			if ($token->type === Token::NEWLINE) {
+				break;
+			}
+			
+			if ($token->type !== Token::WHITESPACE) {
+				$my_tokens[] = $token;
+			}
 		}
 		
-		// And the newline
-		\array_shift($tokens);
-		
-		return new struct\HorizontalRule();
+		$parent[] = new Block(Type::LEAF_HR, $parent, $my_tokens);
+		return $tokens;
 	}
 }

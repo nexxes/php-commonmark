@@ -31,13 +31,14 @@ use \nexxes\stmd\structure\Block;
 use \nexxes\stmd\structure\Type;
 
 /**
- * Description of ParagraphParser
- *
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
+ * @link http://jgm.github.io/stmd/spec.html#paragraphs
  */
 class ParagraphParser implements ParserInterface {
+	const TYPE = Type::LEAF_PARAGRAPH;
+	
 	/**
-	 * @var Parser
+	 * @var \nexxes\stmd\Parser
 	 */
 	private $mainParser;
 	
@@ -46,6 +47,13 @@ class ParagraphParser implements ParserInterface {
 	 */
 	public function __construct($mainParser) {
 		$this->mainParser = $mainParser;
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function canInterrupt(array $tokens) {
+		return false;
 	}
 
 	/**

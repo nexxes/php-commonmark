@@ -26,16 +26,17 @@
 
 namespace nexxes\stmd\parser;
 
-use \nexxes\stmd\token\CharToken;
 use \nexxes\stmd\token\Token;
-
 use nexxes\stmd\structure\Block;
 use nexxes\stmd\structure\Type;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
+ * @link http://jgm.github.io/stmd/spec.html#block-quotes
  */
 class BlockquoteParser implements ParserInterface {
+	const TYPE = Type::CONTAINER_BLOCKQUOTE;
+	
 	/**
 	 * @var \nexxes\stmd\Parser
 	 */
@@ -46,6 +47,13 @@ class BlockquoteParser implements ParserInterface {
 	 */
 	public function __construct($mainParser) {
 		$this->mainParser = $mainParser;
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function canInterrupt(array $tokens) {
+		return $this->canParse($tokens);
 	}
 	
 	/**

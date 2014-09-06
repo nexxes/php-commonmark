@@ -46,6 +46,18 @@ class Parser {
 	
 	private $parsers = [];
 	
+	/**
+	 * The priority of block parsers, later parsers have lower priority
+	 * @var array<string>
+	 */
+	private $block_prio = [
+		Structs::CONTAINER_BLOCKQUOTE,
+		Structs::LEAF_HR,
+		Structs::LEAF_PARAGRAPH,
+	];
+	
+	
+	
 	
 	public function __construct() {
 		/*
@@ -55,9 +67,18 @@ class Parser {
 		$this->parsers[self::INLINE_CODE] = new InlineCodeParser($this);
 		$this->parsers[self::LINEBREAK] = new HardLineBreakParser($this);
 		 */
-		
-		$this->parsers[Structs::CONTAINER_BLOCKQUOTE] = new parser\BlockquoteParser($this);
-		$this->parsers[Structs::LEAF_PARAGRAPH] = new parser\ParagraphParser($this);
+
+		$this->useParser(new parser\BlockquoteParser($this));
+		$this->useParser(new parser\HorizontalRuleParser($this));
+		$this->useParser(new parser\ParagraphParser($this));
+	}
+	
+	/**
+	 * Use the supplied parser to parse the structure indicated in the TYPE constant of the parsers class.
+	 * @param \nexxes\stmd\parser\ParserInterface $parser
+	 */
+	public function useParser(parser\ParserInterface $parser) {
+		$this->parsers[$parser::TYPE] = $parser;
 	}
 	
 	public function parseString($string) {
@@ -154,28 +175,6 @@ class Parser {
 	
 	
 	/**
-	 * Check if someone wants to interrupt a paragraph
-	 * @param array<\nexxes\stmd\token\Token> $tokens
-	 * @return boolean
-	 */
-	public function canInterrupt(array &$tokens) {
-		// Empty tokenlist
-		if (!\count($tokens)) {
-			return false;
-		}
-		
-		$canParse = $this->canParseBlock($tokens);
-		if (\in_array($canParse, [
-			Structs::CONTAINER_BLOCKQUOTE,
-		])) {
-			return true;
-		}
-		
-		return false;
-	}
-	
-	
-	/**
 	 * Try to eat up to three spaces indentation.
 	 * 
 	 * @param array<\nexxes\stmd\token\Token> $tokens
@@ -235,6 +234,28 @@ class Parser {
 		return false;
 	}
 	
+	
+	/**
+	 * Check if someone wants to interrupt a paragraph
+	 * @param array<\nexxes\stmd\token\Token> $tokens
+	 * @return boolean
+	 */
+	public function canInterrupt(array &$tokens) {
+		if (!\count($tokens)) {
+			return false;
+		}
+		
+		// Try to parse blocks according to priority array
+		foreach ($this->block_prio AS $blockType) {
+			if ($this->parsers[$blockType]->canInterrupt($tokens)) {
+				return $blockType;
+			}
+		}
+		
+		return false;
+	}
+	
+	
 	/**
 	 * Returns the block type that can be parsed from this data.
 	 * If no type is returned, parse as Paragraph.
@@ -246,14 +267,16 @@ class Parser {
 			return false;
 		}
 		
-		if ($this->parsers[Structs::CONTAINER_BLOCKQUOTE]->canParse($tokens)) {
-			return Structs::CONTAINER_BLOCKQUOTE;
+		// Try to parse blocks according to priority array
+		foreach ($this->block_prio AS $blockType) {
+			if ($this->parsers[$blockType]->canParse($tokens)) {
+				return $blockType;
+			}
 		}
 		
-		else {
-			return Structs::LEAF_PARAGRAPH;
-		}
+		return Structs::LEAF_PARAGRAPH;
 	}
+	
 	
 	/**
 	 * Execute the parser of type $type. If $type is empty, find the matching parser.
@@ -272,8 +295,6 @@ class Parser {
 		if ($type === false) {
 			return $tokens;
 		}
-		
-		echo "Parsing block type: " . $type . PHP_EOL;
 		
 		return $this->parsers[$type]->parse($parent, $tokens);
 	}

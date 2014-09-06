@@ -40,6 +40,14 @@ interface ParserInterface {
 	function __construct($mainParser);
 	
 	/**
+	 * Checks if this parser can interrupt a paragraph and can parse the next line of input
+	 * 
+	 * @param array<\nexxes\stmd\token\Token> $tokens
+	 * @return bool
+	 */
+	function canInterrupt(array $tokens);
+	
+	/**
 	 * Checks if this parser can parse the next line of input
 	 * 
 	 * @param array<\nexxes\stmd\token\Token> $tokens
