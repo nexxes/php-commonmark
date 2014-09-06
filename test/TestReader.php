@@ -116,16 +116,12 @@ class TestReader {
 			
 			else {
 				if ($middle) {
-					$out .= $this->lines[$i] . PHP_EOL;
+					$out .= (\strlen($out) ? PHP_EOL : '') . $this->lines[$i];
 				} elseif ($start) {
-					$in .= $this->lines[$i] . PHP_EOL;
+					$in .= (\strlen($in) ? PHP_EOL : '') . $this->lines[$i];
 				}
 			}
 		}
-		
-		// Remove last \n
-		$in = \substr($in, 0, \strlen($in)-1);
-		$out = \substr($out, 0, \strlen($out)-1);
 		
 		return ['in' => $in, 'out' => $out];
 	}

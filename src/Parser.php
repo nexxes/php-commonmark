@@ -29,6 +29,7 @@ namespace nexxes\stmd;
 use \nexxes\stmd\token\Token;
 use \nexxes\stmd\token\Tokenizer;
 use \nexxes\stmd\structure\Block;
+use \nexxes\stmd\structure\Document;
 use \nexxes\stmd\structure\Type AS Structs;
 
 /**
@@ -45,6 +46,12 @@ class Parser {
 	const LINEBREAK = 'Hard_Line_Break';
 	
 	private $parsers = [];
+	
+	/**
+	 * Token generated at the last run
+	 * @var array<\nexxes\stmd\token\Token>
+	 */
+	public $tokens = [];
 	
 	/**
 	 * The priority of block parsers, later parsers have lower priority
@@ -88,55 +95,17 @@ class Parser {
 	}
 	
 	public function parseString($string) {
-		//$preprocessed = $this->preprocess($string);
-		//$stream = \explode("\n", $preprocessed);
-		
-		//return $this->parse($stream);
+		$string = $this->preprocess($string);
 		
 		$tokenizer = new Tokenizer($string);
-		$tokens = $tokenizer->run();
+		$tokens = $this->tokens = $tokenizer->run();
+		$doc = new Document($this->tokens);
 		
-		//print_r($tokens);
-		
-		return $this->parse($tokens);
-	}
-	
-	public function parse(array &$tokens) {
-		$struct = [];
-		
-		//print_r($tokens);
-		
-		while (\count($tokens)) {
-			// Remove one to three spaces indent
-			if (($tokens[0]->type === Token::WHITESPACE) && ($tokens[0]->length <= 3)) {
-				\array_shift($tokens);
-				continue;
-			}
-			
-			if ($tokens[0]->type === Token::BLANKLINE) {
-				\array_shift($tokens);
-				continue;
-			}
-			
-			if ($this->parsers[self::HORIZONTAL_RULE]->canParse($tokens)) {
-				$struct[] = $this->parsers[self::HORIZONTAL_RULE]->parse($tokens);
-			}
-			
-			elseif ($this->parsers[self::SETEXT_HEADER]->canParse($tokens)) {
-				$struct[] = $this->parsers[self::SETEXT_HEADER]->parse($tokens);
-			}
-			
-			elseif ($this->parsers[self::PARAGRAPH]->canParse($tokens)) {
-				$struct[] = $this->parsers[self::PARAGRAPH]->parse($tokens);
-			}
-			
-			// Avoid enless loops, eat unparsable stuff
-			else {
-				$struct[] = new struct\Literal(\array_shift($tokens));
-			}
+		while (count($tokens)) {
+			$tokens = $this->parseBlock($doc, $tokens);
 		}
 		
-		return $struct;
+		return (string)new Printer($doc);
 	}
 	
 	public function parseInline(array &$tokens, $oneLineOnly = false) {
@@ -178,34 +147,6 @@ class Parser {
 		$string3 = \str_replace("\r", "\n", $string2);
 		return $string3;
 	}
-	
-	
-	/**
-	 * Try to eat up to three spaces indentation.
-	 * 
-	 * @param array<\nexxes\stmd\token\Token> $tokens
-	 * @return boolean
-	 */
-	public function removeIndentation(array &$tokens) {
-		// Nothing to eat
-		if (!\count($tokens)) {
-			return false;
-		}
-		
-		// Can only eat whitespace
-		if ($tokens[0]->type !== Token::WHITESPACE) {
-			return false;
-		}
-		
-		// Eat only 3 spaces
-		if ($tokens[0]->length > 3) {
-			return false;
-		}
-		
-		\array_shift($tokens);
-		return true;
-	}
-	
 	
 	/**
 	 * Find the next token that is of the specified type.

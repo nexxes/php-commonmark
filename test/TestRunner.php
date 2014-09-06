@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require_once(__DIR__ . '/../vendor/autoload.php');
+require_once(__DIR__ . '/autoload.php');
 
 $md = "";
 
@@ -10,8 +10,5 @@ while (!\feof(STDIN)) {
 }
 
 $parser = new \nexxes\stmd\Parser();
-$struct = $parser->parseString($md);
-
-foreach ($struct AS $elem) {
-	echo $elem;
-}
+echo $parser->parseString($md);
+echo PHP_EOL;
