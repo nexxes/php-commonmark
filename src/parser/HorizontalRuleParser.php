@@ -81,15 +81,14 @@ class HorizontalRuleParser implements ParserInterface {
 			
 			if ($token->type === $usedChar) {
 				$count += $token->length;
-				
-				// Found enough marker
-				if ($count >= 3) {
-					return true;
-				}
 			}
 			
 			// Ignore whitespace
 			elseif ($token->type === Token::WHITESPACE) {
+			}
+			
+			elseif ($token->type === Token::NEWLINE) {
+				break;
 			}
 			
 			else {
@@ -97,7 +96,7 @@ class HorizontalRuleParser implements ParserInterface {
 			}
 		}
 		
-		return false;
+		return ($count >= 3);
 	}
 	
 	/**

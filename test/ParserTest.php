@@ -107,7 +107,6 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	public function testHorizontalRuleParser() {
 		for ($test=4; $test <= 22; ++$test) {
 			if ($test == 9) { continue; } // Requires code block
-			if ($test == 16) { continue; } // FIXME
 			if ($test == 17) { continue; } // Requires emphasis
 			if ($test == 18) { continue; } // Requires lists
 			if ($test == 20) { continue; } // Requires setext header
