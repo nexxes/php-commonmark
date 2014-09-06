@@ -53,6 +53,8 @@ class Printer {
 		switch ($elem->getType()) {
 			case Type::CONTAINER_BLOCKQUOTE:
 				return $this->printBlockquote($elem);
+			case Type::LEAF_HR:
+				return $this->printHorizontalRule($elem);
 			case Type::LEAF_PARAGRAPH:
 				return $this->printParagraph($elem);
 			
@@ -62,7 +64,11 @@ class Printer {
 	}
 	
 	protected function printBlockquote(Block $elem) {
-		return '<blockquote>' . PHP_EOL . $this->printElements($elem) . '</blockquote>';
+		return '<blockquote>' . PHP_EOL . $this->printElements($elem) . (\count($elem) ? PHP_EOL : '') . '</blockquote>';
+	}
+	
+	protected function printHorizontalRule(Block $elem) {
+		return '<hr />';
 	}
 	
 	protected function printParagraph(Block $paragraph) {
@@ -72,7 +78,7 @@ class Printer {
 			$r .= $token->raw;
 		}
 		
-		return '<p>' . $r . '</p>' . PHP_EOL;
+		return '<p>' . $r . '</p>';
 	}
 	
 	protected function printInlineSoftBreak(Block $elem) {
@@ -86,8 +92,8 @@ class Printer {
 	 */
 	protected function printElements(Block $block) {
 		$r = '';
-		foreach ($block AS $element) {
-			$r .= $this->doPrint($element);
+		foreach ($block AS $i => $element) {
+			$r .= ($i>0 ? PHP_EOL : '') . $this->doPrint($element);
 		}
 		return $r;
 	}
