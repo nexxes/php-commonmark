@@ -24,56 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace nexxes\stmd;
-
-use \nexxes\stmd\structure\Document;
-use \nexxes\stmd\structure\Type;
-use \nexxes\stmd\token\Tokenizer;
+namespace nexxes\stmd\parser;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class ParserTest extends \PHPUnit_Framework_TestCase {
-	private $exampleReader;
-	
-	public function setUp() {
-		$this->exampleReader = new \nexxes\stmd\TestReader(__DIR__ . '/../spec/spec.txt');
-	}
-	
-	public function runExample($exampleNo) {
-		$example = $this->exampleReader->getExample($exampleNo);
-		
-		$tokenizer = new Tokenizer($example['in']);
-		$tokens = $tokenizer->run();
-		
-		$doc = new Document($tokens);
-		$parser = new Parser();
-		
-		while (count($tokens)) {
-			$tokens = $parser->parseBlock($doc, $tokens);
-		}
-		
-		$output = (string)new Printer($doc);
-		
-		if ($example['out'] !== $output) {
-			print_r($doc->getTokens());
-		}
-		$this->assertEquals($example['out'], $output, 'Example ' . $exampleNo . ' failed!');
-	}
-	
-	/**
-	 * @test
-	 * @covers \nexxes\stmd\parser\ATXHeaderParser
-	 */
-	public function testATXHeaderParser() {
-		for ($test=23; $test <= 39; ++$test) {
-			if ($test == 27) { continue; } // Requires emphasis
-			if ($test == 30) { continue; } // Requires code block
-			
-			$this->runExample($test);
-		}
-	}
-	
+class BlockquoteParserTest extends \nexxes\stmd\SpecificationTest {
 	/**
 	 * @test
 	 * @covers \nexxes\stmd\parser\BlockquoteParser
@@ -95,23 +51,6 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 			if ($test == 149) { continue; } // Blockquote continuation / LAZYNESS
 			if ($test == 150) { continue; } // Blockquote continuation / LAZYNESS
 			if ($test == 151) { continue; } // Requires code blocks
-			
-			$this->runExample($test);
-		}
-	}
-	
-	/**
-	 * @test
-	 * @covers \nexxes\stmd\parser\HorizontalRuleParser
-	 */
-	public function testHorizontalRuleParser() {
-		for ($test=4; $test <= 22; ++$test) {
-			if ($test == 9) { continue; } // Requires code block
-			if ($test == 17) { continue; } // Requires emphasis
-			if ($test == 18) { continue; } // Requires lists
-			if ($test == 20) { continue; } // Requires setext header
-			if ($test == 21) { continue; } // Requires lists
-			if ($test == 22) { continue; } // Requires lists
 			
 			$this->runExample($test);
 		}
