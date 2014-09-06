@@ -36,7 +36,10 @@ class Document extends Block {
 		}
 		
 		$this->tokens = $tokens;
-		$this->root = $this;
 		$this->type = Type::ROOT;
+	}
+	
+	public function getRoot() {
+		return $this;
 	}
 }

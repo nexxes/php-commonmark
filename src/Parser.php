@@ -63,6 +63,7 @@ class Parser {
 		Structs::LEAF_ATX,
 		Structs::LEAF_SETEXT,
 		Structs::LEAF_INDENTED_CODE,
+		Structs::LEAF_FENCED_CODE,
 		Structs::LEAF_PARAGRAPH,
 	];
 	
@@ -83,6 +84,7 @@ class Parser {
 		$this->useParser(new parser\ATXHeaderParser($this));
 		$this->useParser(new parser\SetextHeaderParser($this));
 		$this->useParser(new parser\IndentedCodeParser($this));
+		$this->useParser(new parser\FencedCodeParser($this));
 		$this->useParser(new parser\ParagraphParser($this));
 	}
 	
@@ -323,5 +325,23 @@ class Parser {
 		} else {
 			return $tokens;
 		}
+	}
+	
+	/**
+	 * Check if the element at the supplied position exists, is whitespace and not longer than 3 spaces.
+	 * 
+	 * @param array<\nexxes\stmd\token\Token> $tokens
+	 * @param int $pos
+	 * @return boolean
+	 */
+	public function isIndentation(array $tokens, $pos) {
+		// Element does not exist
+		if (!isset($tokens[$pos])) { return false; }
+		
+		// Not whitespace
+		if ($tokens[$pos]->type !== Token::WHITESPACE) { return false; }
+		
+		// Check length
+		return ($tokens[$pos]->length <= 3);
 	}
 }

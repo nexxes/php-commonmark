@@ -88,7 +88,7 @@ class Block implements StructureInterface, \ArrayAccess, \IteratorAggregate, \Co
 		$this->type = $type;
 		$this->tokens = $tokens;
 		$this->parent = $parent;
-		$this->root = $parent->root;
+		$this->root = $parent->getRoot();
 	}
 	
 	/**
