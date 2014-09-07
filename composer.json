@@ -1,7 +1,7 @@
 {
 	"name": "nexxes/commonmark",
 	"description": "PHP Parser for Common Mark",
-	"homepage": "https://github.com/nexxes/commonmark",
+	"homepage": "https://github.com/nexxes/php-commonmark",
 	
 	"authors": [
 		{
