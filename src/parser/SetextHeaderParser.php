@@ -26,7 +26,7 @@
 
 namespace nexxes\cm\parser;
 
-use \nexxes\cm\token\Token;
+use \nexxes\tokenizer\Token;
 use \nexxes\cm\structure\Block;
 use \nexxes\cm\structure\Type;
 

@@ -48,7 +48,7 @@ interface StructureInterface {
 	
 	/**
 	 * Get the list of tokens this element is composed of
-	 * @return array<\nexxes\cm\token\token>
+	 * @return array<\nexxes\tokenizer\token>
 	 */
 	function getTokens();
 	

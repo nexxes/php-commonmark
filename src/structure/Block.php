@@ -46,7 +46,7 @@ class Block implements StructureInterface, \ArrayAccess, \IteratorAggregate, \Co
 	
 	/**
 	 * List of tokens this elements is composed of
-	 * @var array<\nexxes\cm\token\Token>
+	 * @var array<\nexxes\tokenizer\Token>
 	 */
 	protected $tokens;
 	
@@ -82,7 +82,7 @@ class Block implements StructureInterface, \ArrayAccess, \IteratorAggregate, \Co
 	/**
 	 * 
 	 * @param Block $parent
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 */
 	public function __construct($type, Block $parent, array $tokens) {
 		$this->type = $type;

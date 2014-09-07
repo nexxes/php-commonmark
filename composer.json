@@ -1,6 +1,7 @@
 {
 	"name": "nexxes/commonmark",
 	"description": "PHP Parser for Common Mark",
+	"homepage": "https://github.com/nexxes/commonmark",
 	
 	"authors": [
 		{
@@ -15,6 +16,9 @@
 		}
 	},
 	
-	"homepage": "http://getbootstrap.com",
+	"require": {
+		"nexxes/tokenizer": "*"
+	},
+	
 	"license": "MIT"
 }

@@ -26,7 +26,7 @@
 
 namespace nexxes\cm;
 
-use nexxes\cm\token\Token;
+use nexxes\tokenizer\Token;
 
 /**
  * Description of ParagraphParser

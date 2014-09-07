@@ -26,8 +26,8 @@
 
 namespace nexxes\cm;
 
-use \nexxes\cm\token\Token;
-use \nexxes\cm\token\Tokenizer;
+use \nexxes\tokenizer\Token;
+use \nexxes\tokenizer\Tokenizer;
 use \nexxes\cm\structure\Block;
 use \nexxes\cm\structure\Document;
 use \nexxes\cm\structure\Type AS Structs;
@@ -49,7 +49,7 @@ class Parser {
 	
 	/**
 	 * Token generated at the last run
-	 * @var array<\nexxes\cm\token\Token>
+	 * @var array<\nexxes\tokenizer\Token>
 	 */
 	public $tokens = [];
 	
@@ -190,7 +190,7 @@ class Parser {
 	 * Check if someone wants to interrupt a paragraph
 	 * 
 	 * @param \nexxes\cm\structure\Block $context
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @return boolean
 	 */
 	public function canInterrupt(Block $context, array &$tokens) {
@@ -214,7 +214,7 @@ class Parser {
 	 * If no type is returned, parse as Paragraph.
 	 * 
 	 * @param \nexxes\cm\structure\Block $context
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @return string
 	 */
 	public function canParseBlock(Block $context, array &$tokens) {
@@ -238,9 +238,9 @@ class Parser {
 	 * Returns the remaining tokens
 	 * 
 	 * @param \nexxes\cm\structure\Block $context
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @param string $type
-	 * @return array<\nexxes\cm\token\Token>
+	 * @return array<\nexxes\tokenizer\Token>
 	 */
 	public function parseBlock(Block $context, array $tokens, $type = null) {
 		if ($type === null) {
@@ -277,7 +277,7 @@ class Parser {
 	 * Asumes that current position is at the beginning of a line.
 	 * Returns the number of tokens in this line (1 or 2) or false if not a blank line
 	 * 
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @param int $pos
 	 * @return int|boolean
 	 */
@@ -296,8 +296,8 @@ class Parser {
 	
 	/**
 	 * Remove leading and trailing blank lines
-	 * @param array<\nexxes\cm\token\Token> $tokens
-	 * @return array<\nexxes\cm\token\Token>
+	 * @param array<\nexxes\tokenizer\Token> $tokens
+	 * @return array<\nexxes\tokenizer\Token>
 	 */
 	public function killBlankLines(array $tokens) {
 		$found = 0;
@@ -332,7 +332,7 @@ class Parser {
 	/**
 	 * Check if the element at the supplied position exists, is whitespace and not longer than 3 spaces.
 	 * 
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @param int $pos
 	 * @return boolean
 	 */

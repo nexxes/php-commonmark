@@ -26,14 +26,14 @@
 
 namespace nexxes\cm\struct;
 
-use \nexxes\cm\token\Token;
+use \nexxes\tokenizer\Token;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
 class Literal {
 	/**
-	 * @var \nexxes\cm\token\Token
+	 * @var \nexxes\tokenizer\Token
 	 */
 	public $tokens;
 	

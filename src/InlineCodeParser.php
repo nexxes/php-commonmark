@@ -29,7 +29,7 @@ namespace nexxes\cm;
 use \nexxes\cm\struct\Container;
 use \nexxes\cm\struct\InlineCode;
 use \nexxes\cm\struct\Literal;
-use \nexxes\cm\token\Token;
+use \nexxes\tokenizer\Token;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>

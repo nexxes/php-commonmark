@@ -26,7 +26,7 @@
 
 namespace nexxes\cm\parser;
 
-use \nexxes\cm\token\Token;
+use \nexxes\tokenizer\Token;
 use \nexxes\cm\structure\Block;
 use \nexxes\cm\structure\Type;
 
@@ -150,7 +150,7 @@ class HTMLBlockParser implements ParserInterface {
 	
 	/**
 	 * Try to match opening tag: <tagname
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @param int $pos
 	 * @return boolean
 	 */
@@ -163,7 +163,7 @@ class HTMLBlockParser implements ParserInterface {
 	
 	/**
 	 * Try to match clsoing tag: </tagname>
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @param int $pos
 	 * @return boolean
 	 */
@@ -178,7 +178,7 @@ class HTMLBlockParser implements ParserInterface {
 	
 	/**
 	 * Try to match comment from current position: <!-- ... -->
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @param int $pos
 	 * @return boolean
 	 */
@@ -201,7 +201,7 @@ class HTMLBlockParser implements ParserInterface {
 	
 	/**
 	 * CData: <![CDATA[  ]]>
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @param int $pos
 	 * @return boolean
 	 */
@@ -231,7 +231,7 @@ class HTMLBlockParser implements ParserInterface {
 	
 	/**
 	 * Processing instructions: <? ?>
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @param int $pos
 	 * @return boolean
 	 * @link http://jgm.github.io/stmd/spec.html#processing-instruction

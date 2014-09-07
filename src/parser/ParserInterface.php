@@ -43,7 +43,7 @@ interface ParserInterface {
 	 * Checks if this parser can interrupt a paragraph and can parse the next line of input
 	 * 
 	 * @param \nexxes\cm\structure\Block $context
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @return bool
 	 */
 	function canInterrupt(Block $context, array $tokens);
@@ -52,7 +52,7 @@ interface ParserInterface {
 	 * Checks if this parser can parse the next line of input
 	 * 
 	 * @param \nexxes\cm\structure\Block $context
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @return bool
 	 */
 	function canParse(Block $context, array $tokens);
@@ -63,8 +63,8 @@ interface ParserInterface {
 	 * The remaining tokens are returned.
 	 * 
 	 * @param array<\nexxes\cm\structure\Block> $parent
-	 * @param array<\nexxes\cm\token\Token> $tokens
-	 * @return array<\nexxes\cm\token\Token>
+	 * @param array<\nexxes\tokenizer\Token> $tokens
+	 * @return array<\nexxes\tokenizer\Token>
 	 */
 	function parse(Block $parent, array $tokens);
 }

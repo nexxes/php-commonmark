@@ -26,7 +26,7 @@
 
 namespace nexxes\cm\parser;
 
-use \nexxes\cm\token\Token;
+use \nexxes\tokenizer\Token;
 use \nexxes\cm\structure\Block;
 use \nexxes\cm\structure\Type;
 
@@ -44,7 +44,7 @@ class FencedCodeParser implements ParserInterface {
 	
 	/**
 	 * The fence token found in the last run
-	 * @var \nexxes\cm\token\Token
+	 * @var \nexxes\tokenizer\Token
 	 */
 	private $fence;
 	
@@ -174,9 +174,9 @@ class FencedCodeParser implements ParserInterface {
 	
 	/**
 	 * 
-	 * @param array<\nexxes\cm\token\Token> $tokens
+	 * @param array<\nexxes\tokenizer\Token> $tokens
 	 * @param type $pos
-	 * @param \nexxes\cm\token\Token $fence
+	 * @param \nexxes\tokenizer\Token $fence
 	 * @return boolean
 	 */
 	private function isClosing(array &$tokens, $pos, Token $fence) {

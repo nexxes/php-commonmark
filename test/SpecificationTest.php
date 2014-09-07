@@ -27,7 +27,7 @@
 namespace nexxes\cm;
 
 use \nexxes\cm\structure\Document;
-use \nexxes\cm\token\Tokenizer;
+use \nexxes\tokenizer\Tokenizer;
 
 /**
  * Base for tests that use examples from the specification
